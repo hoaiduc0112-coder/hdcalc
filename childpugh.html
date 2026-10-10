@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Đánh giá Xơ gan (Child-Pugh)</title>
+  <meta name="specialty" content="Tiêu hóa / Gan mật">
+  <meta name="description" content="Thang điểm Child-Pugh: Đánh giá mức độ nặng, chức năng gan và tiên lượng ở bệnh nhân xơ gan dựa trên 5 thông số lâm sàng và cận lâm sàng.">
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --primary-light: #ccfbf1;
+      --primary-border: #2dd4bf;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      
+      --status-a: #16a34a;
+      --status-a-bg: #dcfce7;
+      --status-b: #d97706;
+      --status-b-bg: #fef3c7;
+      --status-c: #dc2626;
+      --status-c-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px 80px; line-height: 1.5; }
+    .container { max-width: 840px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #99f6e4; color: #115e59; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 26px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .instructions-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    
+    .actions-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+    .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 280px; outline: none; }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(13,148,136,0.15); }
+
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Category Group */
+    .group-section { margin-bottom: 24px; }
+    .group-header { font-size: 16px; font-weight: 700; color: #334155; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+    .group-header span { font-size: 13px; font-weight: normal; color: var(--subtext); }
+
+    .options-grid { display: grid; gap: 8px; }
+
+    .item-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none; }
+    .item-card:hover { border-color: #cbd5e1; background: #fafafa; }
+    .item-card.selected { background: var(--primary-light); border-color: var(--primary-border); }
+
+    .item-radio { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0; cursor: pointer; }
+    .item-details { flex-grow: 1; }
+    .item-title { font-size: 14.5px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .item-desc { font-size: 13px; color: var(--subtext); margin-top: 2px; }
+
+    .pts-badge { background: #f1f5f9; color: #475569; font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; flex-shrink: 0; }
+    .item-card.selected .pts-badge { background: var(--primary); color: #ffffff; }
+
+    /* Result Bar (Sticky bottom) */
+    .result-container { position: sticky; bottom: 16px; z-index: 100; margin-top: 32px; }
+    .result-card { background: #ffffff; border: 2px solid var(--border); border-radius: 12px; padding: 18px 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+    .result-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+
+    .score-view { display: flex; align-items: baseline; gap: 10px; }
+    .score-num { font-size: 40px; font-weight: 800; color: var(--primary); line-height: 1; }
+    .score-label { font-size: 14px; color: var(--subtext); }
+
+    .status-badge { font-size: 14px; font-weight: 700; padding: 6px 14px; border-radius: 6px; }
+    .status-text { font-size: 14px; color: var(--text); margin-top: 10px; line-height: 1.5; }
+
+    /* Clinical Guide Box */
+    .guide-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 28px; font-size: 13.5px; color: var(--subtext); }
+    .guide-box h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .guide-box ul { padding-left: 20px; margin-bottom: 12px; }
+    .guide-box li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Tiêu hóa / Gan mật</span>
+    <h1>Thang điểm Child-Pugh</h1>
+    <p class="description">Đánh giá mức độ nặng và tiên lượng chức năng gan ở bệnh nhân xơ gan dựa trên 5 tiêu chí lâm sàng và cận lâm sàng.</p>
+  </div>
+
+  <div class="instructions-bar">
+    <div><strong>Lưu ý:</strong> Chọn 1 mức độ tương ứng cho mỗi 5 chỉ số dưới đây để hệ thống tự động tính điểm và phân loại Child-Pugh (A, B hoặc C).</div>
+  </div>
+
+  <div class="actions-bar">
+    <input type="text" id="quick-search" class="search-input" placeholder="Tìm nhanh tiêu chí (bệnh não gan, cổ trướng...)...">
+    <button type="button" class="btn-reset" id="btn-reset">Đặt lại từ đầu</button>
+  </div>
+
+  <!-- TIÊU CHÍ 1: BỆNH NÃO GAN -->
+  <div class="group-section" data-group-name="Bệnh não gan">
+    <div class="group-header">
+      1. Bệnh não gan (Encephalopathy)
+      <span>Chọn 1 mức độ</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card" data-pts="1">
+        <input type="radio" name="enceph" class="item-radio" data-pts="1" value="1">
+        <div class="item-details">
+          <div class="item-title">Không có (None)</div>
+          <div class="item-desc">Tâm thần kinh bình thường, không có biểu hiện bệnh não gan.</div>
+        </div>
+        <div class="pts-badge">+1 đ</div>
+      </label>
+      <label class="item-card" data-pts="2">
+        <input type="radio" name="enceph" class="item-radio" data-pts="2" value="2">
+        <div class="item-details">
+          <div class="item-title">Độ 1 - 2 (Grade 1-2)</div>
+          <div class="item-desc">Lú lẫn nhẹ, mất ngủ, tính tình thay đổi hoặc có dấu sao vỗ cánh (asterixis) rõ.</div>
+        </div>
+        <div class="pts-badge">+2 đ</div>
+      </label>
+      <label class="item-card" data-pts="3">
+        <input type="radio" name="enceph" class="item-radio" data-pts="3" value="3">
+        <div class="item-details">
+          <div class="item-title">Độ 3 - 4 (Grade 3-4)</div>
+          <div class="item-desc">Ngủ gà, lú lẫn nặng, bán mê sảng hoặc hôn mê sâu.</div>
+        </div>
+        <div class="pts-badge">+3 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- TIÊU CHÍ 2: CỔ TRƯỚNG -->
+  <div class="group-section" data-group-name="Cổ trướng">
+    <div class="group-header">
+      2. Cổ trướng (Ascites)
+      <span>Chọn 1 mức độ</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card" data-pts="1">
+        <input type="radio" name="ascites" class="item-radio" data-pts="1" value="1">
+        <div class="item-details">
+          <div class="item-title">Không có (None)</div>
+          <div class="item-desc">Không phát hiện dịch ổ bụng trên lâm sàng hoặc siêu âm.</div>
+        </div>
+        <div class="pts-badge">+1 đ</div>
+      </label>
+      <label class="item-card" data-pts="2">
+        <input type="radio" name="ascites" class="item-radio" data-pts="2" value="2">
+        <div class="item-details">
+          <div class="item-title">Nhẹ / Dễ kiểm soát (Mild)</div>
+          <div class="item-desc">Cổ trướng lượng ít, đáp ứng tốt với thuốc lợi tiểu và hạn chế muối.</div>
+        </div>
+        <div class="pts-badge">+2 đ</div>
+      </label>
+      <label class="item-card" data-pts="3">
+        <input type="radio" name="ascites" class="item-radio" data-pts="3" value="3">
+        <div class="item-details">
+          <div class="item-title">Vừa đến nhiều / Kháng trị (Moderate to Severe)</div>
+          <div class="item-desc">Cổ trướng rõ rệt, căng nhiều hoặc kháng trị với thuốc lợi tiểu thông thường.</div>
+        </div>
+        <div class="pts-badge">+3 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- TIÊU CHÍ 3: BILIRUBIN TOÀN PHẦN -->
+  <div class="group-section" data-group-name="Bilirubin">
+    <div class="group-header">
+      3. Bilirubin toàn phần (Total Bilirubin)
+      <span>Chọn 1 mức độ</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card" data-pts="1">
+        <input type="radio" name="bilirubin" class="item-radio" data-pts="1" value="1">
+        <div class="item-details">
+          <div class="item-title">&lt; 34 µmol/L (&lt; 2.0 mg/dL)</div>
+          <div class="item-desc">Bilirubin trong giới hạn bình thường hoặc tăng nhẹ.</div>
+        </div>
+        <div class="pts-badge">+1 đ</div>
+      </label>
+      <label class="item-card" data-pts="2">
+        <input type="radio" name="bilirubin" class="item-radio" data-pts="2" value="2">
+        <div class="item-details">
+          <div class="item-title">34 &ndash; 50 µmol/L (2.0 &ndash; 3.0 mg/dL)</div>
+          <div class="item-desc">Tăng vừa phải.</div>
+        </div>
+        <div class="pts-badge">+2 đ</div>
+      </label>
+      <label class="item-card" data-pts="3">
+        <input type="radio" name="bilirubin" class="item-radio" data-pts="3" value="3">
+        <div class="item-details">
+          <div class="item-title">&gt; 50 µmol/L (&gt; 3.0 mg/dL)</div>
+          <div class="item-desc">Tăng cao rõ rệt (ngoại trừ trường hợp viêm gan nguyên phát ứ mật).</div>
+        </div>
+        <div class="pts-badge">+3 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- TIÊU CHÍ 4: ALBUMIN HUYẾT THANH -->
+  <div class="group-section" data-group-name="Albumin">
+    <div class="group-header">
+      4. Albumin huyết thanh (Serum Albumin)
+      <span>Chọn 1 mức độ</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card" data-pts="1">
+        <input type="radio" name="albumin" class="item-radio" data-pts="1" value="1">
+        <div class="item-details">
+          <div class="item-title">&gt; 35 g/L (&gt; 3.5 g/dL)</div>
+          <div class="item-desc">Nồng độ Albumin máu bình thường hoặc giảm nhẹ.</div>
+        </div>
+        <div class="pts-badge">+1 đ</div>
+      </label>
+      <label class="item-card" data-pts="2">
+        <input type="radio" name="albumin" class="item-radio" data-pts="2" value="2">
+        <div class="item-details">
+          <div class="item-title">28 &ndash; 35 g/L (2.8 &ndash; 3.5 g/dL)</div>
+          <div class="item-desc">Giảm mức độ trung bình.</div>
+        </div>
+        <div class="pts-badge">+2 đ</div>
+      </label>
+      <label class="item-card" data-pts="3">
+        <input type="radio" name="albumin" class="item-radio" data-pts="3" value="3">
+        <div class="item-details">
+          <div class="item-title">&lt; 28 g/L (&lt; 2.8 g/dL)</div>
+          <div class="item-desc">Giảm nặng.</div>
+        </div>
+        <div class="pts-badge">+3 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- TIÊU CHÍ 5: THỜI GIAN PROTHROMBIN HOẶC INR -->
+  <div class="group-section" data-group-name="Prothrombin">
+    <div class="group-header">
+      5. Thời gian Prothrombin / INR
+      <span>Chọn 1 mức độ</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card" data-pts="1">
+        <input type="radio" name="pt" class="item-radio" data-pts="1" value="1">
+        <div class="item-details">
+          <div class="item-title">INR &lt; 1.7 (Kéo dài &lt; 4 giây)</div>
+          <div class="item-desc">Đông máu cơ bản ổn định.</div>
+        </div>
+        <div class="pts-badge">+1 đ</div>
+      </label>
+      <label class="item-card" data-pts="2">
+        <input type="radio" name="pt" class="item-radio" data-pts="2" value="2">
+        <div class="item-details">
+          <div class="item-title">INR 1.7 &ndash; 2.3 (Kéo dài 4 &ndash; 6 giây)</div>
+          <div class="item-desc">Thời gian Prothrombin kéo dài mức độ trung bình.</div>
+        </div>
+        <div class="pts-badge">+2 đ</div>
+      </label>
+      <label class="item-card" data-pts="3">
+        <input type="radio" name="pt" class="item-radio" data-pts="3" value="3">
+        <div class="item-details">
+          <div class="item-title">INR &gt; 2.3 (Kéo dài &gt; 6 giây)</div>
+          <div class="item-desc">Rối loạn đông máu rõ rệt.</div>
+        </div>
+        <div class="pts-badge">+3 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- BẢNG TỔNG KẾT NỔI (STICKY) -->
+  <div class="result-container">
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div class="score-view">
+          <div class="score-num" id="total-score">5</div>
+          <div class="score-label">/ 15 điểm tối đa</div>
+        </div>
+        <div class="status-badge" id="status-badge">Child-Pugh A (5 điểm)</div>
+      </div>
+      <div class="status-text" id="status-desc">
+        Chức năng gan còn bù tốt. Tiên lượng phẫu thuật và thời gian sống rất khả quan.
+      </div>
+    </div>
+  </div>
+
+  <!-- HƯỚNG DẪN LÂM SÀNG -->
+  <div class="guide-box">
+    <h3>Phân loại mức độ suy giảm chức năng gan theo Child-Pugh:</h3>
+    <ul>
+      <li><strong>Child-Pugh A (5 &ndash; 6 điểm):</strong> Xơ gan còn bù. Chức năng gan tốt, nguy cơ phẫu thuật thấp, tỷ lệ sống cao.</li>
+      <li><strong>Child-Pugh B (7 &ndash; 9 điểm):</strong> Xơ gan mất bù một phần. Suy giảm chức năng gan trung bình, cân nhắc kỹ lưỡng trước khi can thiệp thủ thuật / phẫu thuật lớn.</li>
+      <li><strong>Child-Pugh C (10 &ndash; 15 điểm):</strong> Xơ gan mất bù nặng. Tiên lượng xấu, nguy cơ biến chứng cao, cân nhắc đánh giá chuẩn bị ghép gan.</li>
+    </ul>
+    <p><em>* Lưu ý: Thang điểm Child-Pugh kết hợp cả yếu tố lâm sàng và cận lâm sàng nhằm định hướng tiên lượng sống còn và nguy cơ phẫu thuật ở bệnh nhân bệnh gan mạn tính.</em></p>
+  </div>
+</div>
+
+<script>
+  const totalScoreEl = document.getElementById('total-score');
+  const statusBadgeEl = document.getElementById('status-badge');
+  const statusDescEl = document.getElementById('status-desc');
+  const resultCardEl = document.getElementById('result-card');
+
+  function calculateScore() {
+    let score = 0;
+    // Lấy tất cả các radio đang được checked ở các nhóm
+    const checkedRadios = document.querySelectorAll('.item-radio:checked');
+    checkedRadios.forEach(radio => {
+      score += parseInt(radio.dataset.pts, 10);
+    });
+
+    totalScoreEl.textContent = score;
+
+    if (score >= 5 && score <= 6) {
+      statusBadgeEl.textContent = `Child-Pugh A (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-a-bg)';
+      statusBadgeEl.style.color = 'var(--status-a)';
+      resultCardEl.style.borderColor = '#86efac';
+      statusDescEl.innerHTML = '<strong>Child-Pugh A (5 - 6 điểm):</strong> Xơ gan còn bù. Chức năng gan bảo tồn tốt, nguy cơ phẫu thuật thấp.';
+    } else if (score >= 7 && score <= 9) {
+      statusBadgeEl.textContent = `Child-Pugh B (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-b-bg)';
+      statusBadgeEl.style.color = 'var(--status-b)';
+      resultCardEl.style.borderColor = '#fcd34d';
+      statusDescEl.innerHTML = '<strong>Child-Pugh B (7 - 9 điểm):</strong> Xơ gan mất bù một phần. Chức năng gan bị tổn thương trung bình, cần theo dõi sát và cân nhắc kỹ khi can thiệp ngoại khoa.';
+    } else {
+      statusBadgeEl.textContent = `Child-Pugh C (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-c-bg)';
+      statusBadgeEl.style.color = 'var(--status-c)';
+      resultCardEl.style.borderColor = '#fca5a5';
+      statusDescEl.innerHTML = '<strong>Child-Pugh C (10 - 15 điểm):</strong> Xơ gan mất bù nặng. Tiên lượng dè dặt, nguy cơ biến chứng cao, cần hội chẩn chuyên khoa sâu / cân nhắc ghép gan.';
+    }
+  }
+
+  // Tự động chọn option đầu tiên (1 điểm) cho mỗi nhóm khi tải trang để khởi tạo mặc định 5 điểm chuẩn
+  const groups = ['enceph', 'ascites', 'bilirubin', 'albumin', 'pt'];
+  groups.forEach(gName => {
+    const firstRadio = document.querySelector(`input[name="${gName}"][value="1"]`);
+    if (firstRadio) {
+      firstRadio.checked = true;
+      firstRadio.closest('.item-card').classList.add('selected');
+    }
+  });
+  calculateScore();
+
+  // Lắng nghe sự kiện click trên từng card lựa chọn
+  document.querySelectorAll('.item-card').forEach(card => {
+    const radio = card.querySelector('.item-radio');
+    
+    card.addEventListener('click', () => {
+      if (!radio.checked) {
+        radio.checked = true;
+        // Bỏ chọn class selected của các card khác cùng nhóm
+        const groupName = radio.getAttribute('name');
+        document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+          r.closest('.item-card').classList.remove('selected');
+        });
+        // Thêm class selected cho card hiện tại
+        card.classList.add('selected');
+        calculateScore();
+      }
+    });
+
+    radio.addEventListener('change', () => {
+      const groupName = radio.getAttribute('name');
+      document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+        r.closest('.item-card').classList.remove('selected');
+      });
+      if (radio.checked) {
+        card.classList.add('selected');
+      }
+      calculateScore();
+    });
+  });
+
+  // Tìm kiếm nhanh tiêu chí
+  const searchInput = document.getElementById('quick-search');
+  searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.group-section').forEach(section => {
+      const text = section.textContent.toLowerCase();
+      if (text.includes(term)) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+  });
+
+  // Nút đặt lại (Reset) về mặc định 5 điểm
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    groups.forEach(gName => {
+      const radios = document.querySelectorAll(`input[name="${gName}"]`);
+      radios.forEach((r, idx) => {
+        if (idx === 0) {
+          r.checked = true;
+          r.closest('.item-card').classList.add('selected');
+        } else {
+          r.checked = false;
+          r.closest('.item-card').classList.remove('selected');
+        }
+      });
+    });
+    calculateScore();
+  });
+</script>
+
+</body>
+</html>

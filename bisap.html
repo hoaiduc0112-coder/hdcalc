@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm BISAP - Tiên lượng mức độ nặng Viêm tụy cấp</title>
+  <meta name="specialty" content="Tiêu hóa / Cấp cứu">
+  <meta name="description" content="Thang điểm BISAP (Bedside Index for Severity in Acute Pancreatitis): Đánh giá sớm nguy cơ suy tạng và tử vong ở bệnh nhân viêm tụy cấp trong 24 giờ đầu nhập viện.">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      --low-risk: #16a34a;
+      --low-risk-bg: #dcfce7;
+      --mod-risk: #ea580c;
+      --mod-risk-bg: #ffedd5;
+      --high-risk: #dc2626;
+      --high-risk-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px; line-height: 1.5; }
+    .container { max-width: 760px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #e0f2fe; color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 25px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .calc-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 24px; }
+
+    .criterion-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 16px; }
+    .criterion-item:last-child { border-bottom: none; }
+    .criterion-info { flex: 1; }
+    .criterion-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .criterion-letter { background: #e0f2fe; color: #0284c7; font-weight: 700; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 13px; flex-shrink: 0; }
+    .criterion-desc { font-size: 13px; color: var(--subtext); }
+
+    .btn-group { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-option { border: 1px solid var(--border); background: #f1f5f9; color: var(--subtext); padding: 8px 16px; border-radius: 6px; font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; outline: none; }
+    .btn-option:hover { background: #e2e8f0; }
+    .btn-option.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+    .actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Result Box */
+    .result-box { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center; transition: all 0.2s ease; }
+    .score-display { font-size: 44px; font-weight: 800; line-height: 1; margin-bottom: 12px; color: var(--primary); }
+    .risk-badge { display: inline-block; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 14.5px; margin-bottom: 14px; }
+    .management-text { font-size: 14.5px; color: var(--text); line-height: 1.6; max-width: 650px; margin: 0 auto; text-align: left; background: #fafafa; border-radius: 8px; padding: 14px; border-left: 4px solid var(--primary); }
+
+    /* Guidelines Section */
+    .info-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; font-size: 13.5px; color: var(--subtext); }
+    .info-section h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .info-section ul { padding-left: 20px; margin-bottom: 12px; }
+    .info-section li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Tiêu hóa / Cấp cứu / Hồi sức</span>
+    <h1>Thang điểm BISAP (Viêm tụy cấp)</h1>
+    <p class="description">Đánh giá nguy cơ tử vong trong bệnh viện và biến chứng suy tạng trong <strong>24 giờ đầu nhập viện</strong> ở bệnh nhân viêm tụy cấp.</p>
+  </div>
+
+  <div class="calc-card">
+    <!-- B: BUN -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name"><span class="criterion-letter">B</span> Ure máu: BUN &gt; 25 mg/dL (Urea &gt; 8.9 mmol/L)</div>
+        <div class="criterion-desc">Nồng độ BUN &gt; 25 mg/dL hoặc nồng độ Urea huyết thanh &gt; 8.9 mmol/L (tương đương &gt; 53.5 mg/dL).</div>
+      </div>
+      <div class="btn-group" data-key="b">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <!-- I: Impaired Mental Status -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name"><span class="criterion-letter">I</span> Rối loạn tri giác (Impaired Mental Status)</div>
+        <div class="criterion-desc">Thang điểm Glasgow &lt; 15 hoặc có mất định hướng, lú lẫn, ngủ gà mới xuất hiện.</div>
+      </div>
+      <div class="btn-group" data-key="i">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <!-- S: SIRS -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name"><span class="criterion-letter">S</span> Hội chứng đáp ứng viêm toàn thân (SIRS &ge; 2 tiêu chuẩn)</div>
+        <div class="criterion-desc">Thỏa &ge; 2 trong 4 yếu tố: Thân nhiệt &lt; 36&deg;C hoặc &gt; 38&deg;C; Mạch &gt; 90 lần/phút; Nhịp thở &gt; 20 lần/phút (hoặc PaCO2 &lt; 32 mmHg); Bạch cầu &lt; 4 G/L, &gt; 12 G/L hoặc &gt; 10% gậy.</div>
+      </div>
+      <div class="btn-group" data-key="s">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <!-- A: Age -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name"><span class="criterion-letter">A</span> Tuổi &gt; 60 (Age &gt; 60)</div>
+        <div class="criterion-desc">Người bệnh từ trên 60 tuổi.</div>
+      </div>
+      <div class="btn-group" data-key="a">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <!-- P: Pleural Effusion -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name"><span class="criterion-letter">P</span> Tràn dịch màng phổi (Pleural Effusion)</div>
+        <div class="criterion-desc">Phát hiện tràn dịch màng phổi trên X-quang phổi thẳng, siêu âm ngực hoặc CT-scan.</div>
+      </div>
+      <div class="btn-group" data-key="p">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-reset" id="reset-btn">Đặt lại tất cả</button>
+    </div>
+  </div>
+
+  <!-- Kết quả -->
+  <div class="result-box" id="result-box">
+    <div class="score-display" id="total-score">0 <span style="font-size: 20px; font-weight: normal; color: var(--subtext);">/ 5 điểm</span></div>
+    <div class="risk-badge" id="risk-badge">Nguy cơ tử vong rất thấp (&lt; 1%)</div>
+    <div class="management-text" id="management-text">
+      <strong>Xử trí đề xuất:</strong> Viêm tụy cấp mức độ nhẹ. Điều trị phòng nội trú tiêu hóa/nội khoa chung: bù dịch hướng dẫn theo thể tích tuần hoàn, kiểm soát giảm đau và theo dõi lượng nước tiểu.
+    </div>
+  </div>
+
+  <!-- Diễn giải lâm sàng -->
+  <div class="info-section">
+    <h3>Tỷ lệ tử vong và biến chứng theo điểm BISAP:</h3>
+    <ul>
+      <li><strong>0 điểm:</strong> Tỷ lệ tử vong ~ 0.1 - 0.4%.</li>
+      <li><strong>1 điểm:</strong> Tỷ lệ tử vong ~ 0.4 - 0.7%.</li>
+      <li><strong>2 điểm:</strong> Tỷ lệ tử vong ~ 1.6 - 1.9%.</li>
+      <li><strong>3 điểm:</strong> Tỷ lệ tử vong ~ 3.6 - 5.4% (Tăng nguy cơ suy tạng kéo dài).</li>
+      <li><strong>4 điểm:</strong> Tỷ lệ tử vong ~ 7.3 - 12.8%.</li>
+      <li><strong>5 điểm:</strong> Tỷ lệ tử vong ~ 22.5 - 27.0%.</li>
+    </ul>
+    <h3>Khuyến cáo xử trí thực hành:</h3>
+    <ul>
+      <li><strong>BISAP 0 - 2 điểm:</strong> Nguy cơ thấp. Thường chỉ diễn tiến thể viêm tụy cấp nhẹ tự hồi phục. Có thể điều trị tại khoa Nội thông thường.</li>
+      <li><strong>BISAP &ge; 3 điểm:</strong> <strong>Nguy cơ cao viêm tụy cấp nặng.</strong> Tỷ lệ suy tạng kéo dài và hoại tử tụy tăng cao. Cần cân nhắc theo dõi sát tại đơn vị Hồi sức tích cực (ICU / HDU), hồi sức dịch tích cực trong 12 - 24 giờ đầu và theo dõi chặt dấu hiệu suy hô hấp, suy thận.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const state = { b: 0, i: 0, s: 0, a: 0, p: 0 };
+
+  const totalScoreEl = document.getElementById('total-score');
+  const riskBadgeEl = document.getElementById('risk-badge');
+  const managementTextEl = document.getElementById('management-text');
+  const resultBoxEl = document.getElementById('result-box');
+
+  const mortalityMap = {
+    0: "< 0.5%",
+    1: "~ 0.7%",
+    2: "~ 1.9%",
+    3: "~ 5.4%",
+    4: "~ 12.8%",
+    5: "~ 25.0%"
+  };
+
+  function calculate() {
+    const score = state.b + state.i + state.s + state.a + state.p;
+    totalScoreEl.innerHTML = `${score} <span style="font-size: 20px; font-weight: normal; color: var(--subtext);">/ 5 điểm</span>`;
+
+    if (score <= 1) {
+      riskBadgeEl.textContent = `Nguy cơ tử vong rất thấp (Tử vong: ${mortalityMap[score]})`;
+      riskBadgeEl.style.backgroundColor = 'var(--low-risk-bg)';
+      riskBadgeEl.style.color = 'var(--low-risk)';
+      resultBoxEl.style.borderColor = '#86efac';
+      managementTextEl.innerHTML = '<strong>Xử trí đề xuất:</strong> Viêm tụy cấp nguy cơ thấp. Thích hợp điều trị tại khoa Nội thông thường: Bù dịch tĩnh mạch theo mục tiêu (target-directed hydration), kiểm soát giảm đau và theo dõi lâm sàng.';
+    } else if (score === 2) {
+      riskBadgeEl.textContent = `Nguy cơ trung bình (Tử vong: ${mortalityMap[score]})`;
+      riskBadgeEl.style.backgroundColor = 'var(--mod-risk-bg)';
+      riskBadgeEl.style.color = 'var(--mod-risk)';
+      resultBoxEl.style.borderColor = '#fdba74';
+      managementTextEl.innerHTML = '<strong>Xử trí đề xuất:</strong> Cần theo dõi sát mạch, huyết áp, SpO2, nước tiểu mỗi 4 - 6 giờ. Cân nhắc bù dịch tích cực hơn và làm lại xét nghiệm chức năng thận (BUN/Creatinine) sau 24 giờ.';
+    } else {
+      riskBadgeEl.textContent = `NGUY CƠ CAO - TIÊN LƯỢNG NẶNG (Tử vong: ${mortalityMap[score]})`;
+      riskBadgeEl.style.backgroundColor = 'var(--high-risk-bg)';
+      riskBadgeEl.style.color = 'var(--high-risk)';
+      resultBoxEl.style.borderColor = '#fca5a5';
+      managementTextEl.innerHTML = '<strong>Xử trí đề xuất:</strong> <strong>Bệnh nhân có nguy cơ cao tiến triển suy tạng kéo dài và tử vong.</strong> Xem xét chuyển hoặc hội chẩn đơn vị Hồi sức tích cực (ICU/HDU). Bù dịch tích cực có theo dõi áp lực tĩnh mạch/siêu âm tĩnh mạch chủ dưới, kiểm soát biến chứng suy tạng và cân nhắc chụp CT bụng cản quang sau 72 giờ.';
+    }
+  }
+
+  document.querySelectorAll('.btn-group').forEach(group => {
+    const key = group.dataset.key;
+    const buttons = group.querySelectorAll('.btn-option');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[key] = parseInt(btn.dataset.val, 10);
+        calculate();
+      });
+    });
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    Object.keys(state).forEach(k => state[k] = 0);
+    document.querySelectorAll('.btn-group').forEach(group => {
+      const buttons = group.querySelectorAll('.btn-option');
+      buttons.forEach(b => {
+        if (b.dataset.val === '0') b.classList.add('active');
+        else b.classList.remove('active');
+      });
+    });
+    calculate();
+  });
+
+  calculate();
+</script>
+
+</body>
+</html>

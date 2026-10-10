@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Đánh giá Viêm phổi Cộng đồng (CURB-65)</title>
+  <meta name="specialty" content="Hô hấp / Hồi sức cấp cứu">
+  <meta name="description" content="Thang điểm CURB-65: Đánh giá mức độ nặng và tiên lượng tử vong ở bệnh nhân viêm phổi cộng đồng để quyết định hướng điều trị nội trú hay ngoại trú.">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+      --primary-border: #38bdf8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      
+      --status-low: #16a34a;
+      --status-low-bg: #dcfce7;
+      --status-mod: #d97706;
+      --status-mod-bg: #fef3c7;
+      --status-severe: #dc2626;
+      --status-severe-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px 80px; line-height: 1.5; }
+    .container { max-width: 840px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #bae6fd; color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 26px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .instructions-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    
+    .actions-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+    .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 280px; outline: none; }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(2,132,199,0.15); }
+
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Category Group */
+    .group-section { margin-bottom: 24px; }
+    .group-header { font-size: 16px; font-weight: 700; color: #334155; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+    .group-header span { font-size: 13px; font-weight: normal; color: var(--subtext); }
+
+    .item-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none; }
+    .item-card:hover { border-color: #cbd5e1; background: #fafafa; }
+    .item-card.selected { background: var(--primary-light); border-color: var(--primary-border); }
+
+    .item-checkbox { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0; cursor: pointer; }
+    .item-details { flex-grow: 1; }
+    .item-title { font-size: 14.5px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .item-desc { font-size: 13px; color: var(--subtext); margin-top: 2px; }
+
+    .pts-badge { background: #f1f5f9; color: #475569; font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; flex-shrink: 0; }
+    .item-card.selected .pts-badge { background: var(--primary); color: #ffffff; }
+
+    /* Result Bar (Sticky bottom) */
+    .result-container { position: sticky; bottom: 16px; z-index: 100; margin-top: 32px; }
+    .result-card { background: #ffffff; border: 2px solid var(--border); border-radius: 12px; padding: 18px 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+    .result-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+
+    .score-view { display: flex; align-items: baseline; gap: 10px; }
+    .score-num { font-size: 40px; font-weight: 800; color: var(--primary); line-height: 1; }
+    .score-label { font-size: 14px; color: var(--subtext); }
+
+    .status-badge { font-size: 14px; font-weight: 700; padding: 6px 14px; border-radius: 6px; }
+    .status-text { font-size: 14px; color: var(--text); margin-top: 10px; line-height: 1.5; }
+
+    /* Clinical Guide Box */
+    .guide-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 28px; font-size: 13.5px; color: var(--subtext); }
+    .guide-box h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .guide-box ul { padding-left: 20px; margin-bottom: 12px; }
+    .guide-box li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Hô hấp / Cấp cứu</span>
+    <h1>Thang điểm CURB-65</h1>
+    <p class="description">Đánh giá mức độ nặng và tiên lượng nguy cơ tử vong trong vòng 30 ngày đối với bệnh nhân <strong>Viêm phổi cộng đồng (CAP)</strong>.</p>
+  </div>
+
+  <div class="instructions-bar">
+    <div><strong>Lưu ý:</strong> Tích chọn các tiêu chí lâm sàng và cận lâm sàng tương ứng có mặt ở bệnh nhân để tính tổng điểm (Mỗi tiêu chí tương ứng 1 điểm).</div>
+  </div>
+
+  <div class="actions-bar">
+    <input type="text" id="quick-search" class="search-input" placeholder="Tìm nhanh tiêu chí (ví dụ: lú lẫn, huyết áp, tuổi...)...">
+    <button type="button" class="btn-reset" id="btn-reset">Bỏ chọn tất cả</button>
+  </div>
+
+  <!-- CÁC TIÊU CHÍ CURB-65 -->
+  <div class="group-section">
+    <div class="group-header">
+      Các thành phần đánh giá CURB-65
+      <span>Mỗi tiêu chí = 1 điểm</span>
+    </div>
+
+    <label class="item-card" data-pts="1">
+      <input type="checkbox" class="item-checkbox" data-pts="1">
+      <div class="item-details">
+        <div class="item-title">C - Rối loạn ý thức (Confusion)</div>
+        <div class="item-desc">Mới xuất hiện tình trạng lú lẫn, mất định hướng về không gian, thời gian hoặc bản thân.</div>
+      </div>
+      <div class="pts-badge">+1 đ</div>
+    </label>
+
+    <label class="item-card" data-pts="1">
+      <input type="checkbox" class="item-checkbox" data-pts="1">
+      <div class="item-details">
+        <div class="item-title">U - U-re huyết cao (Uremia)</div>
+        <div class="item-desc">Nồng độ Urea huyết thanh &gt; 7 mmol/L (hoặc BUN &gt; 19 mg/dL).</div>
+      </div>
+      <div class="pts-badge">+1 đ</div>
+    </label>
+
+    <label class="item-card" data-pts="1">
+      <input type="checkbox" class="item-checkbox" data-pts="1">
+      <div class="item-details">
+        <div class="item-title">R - Nhịp thở nhanh (Respiratory rate)</div>
+        <div class="item-desc">Tần số thở &ge; 30 lần/phút.</div>
+      </div>
+      <div class="pts-badge">+1 đ</div>
+    </label>
+
+    <label class="item-card" data-pts="1">
+      <input type="checkbox" class="item-checkbox" data-pts="1">
+      <div class="item-details">
+        <div class="item-title">B - Huyết áp thấp (Blood pressure)</div>
+        <div class="item-desc">Huyết áp tâm thu &lt; 90 mmHg hoặc huyết áp tâm trương &le; 60 mmHg.</div>
+      </div>
+      <div class="pts-badge">+1 đ</div>
+    </label>
+
+    <label class="item-card" data-pts="1">
+      <input type="checkbox" class="item-checkbox" data-pts="1">
+      <div class="item-details">
+        <div class="item-title">65 - Tuổi từ 65 trở lên (Age &ge; 65)</div>
+        <div class="item-desc">Bệnh nhân từ 65 tuổi trở lên.</div>
+      </div>
+      <div class="pts-badge">+1 đ</div>
+    </label>
+  </div>
+
+  <!-- BẢNG TỔNG KẾT NỔI (STICKY) -->
+  <div class="result-container">
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div class="score-view">
+          <div class="score-num" id="total-score">0</div>
+          <div class="score-label">/ 5 điểm tối đa</div>
+        </div>
+        <div class="status-badge" id="status-badge">Nguy cơ thấp (0 điểm)</div>
+      </div>
+      <div class="status-text" id="status-desc">
+        Tỷ lệ tử vong trong 30 ngày rất thấp (0.6%). Thích hợp điều trị ngoại trú.
+      </div>
+    </div>
+  </div>
+
+  <!-- HƯỚNG DẪN LÂM SÀNG -->
+  <div class="guide-box">
+    <h3>Hướng dẫn xử trí và phân tầng nguy cơ theo CURB-65:</h3>
+    <ul>
+      <li><strong>0 - 1 điểm:</strong> Nguy cơ tử vong thấp (0.6% &ndash; 2.7%). Thường thích hợp điều trị ngoại trú tại nhà.</li>
+      <li><strong>2 điểm:</strong> Nguy cơ tử vong trung bình (6.8%). Cân nhắc nhập viện điều trị nội trú ngắn hạn hoặc theo dõi sát.</li>
+      <li><strong>3 - 5 điểm:</strong> Nguy cơ tử vong cao (14.0% &ndash; 57.0%). Chỉ định nhập viện điều trị nội trú khẩn cấp, cân nhắc chuyển khoa Hồi sức tích cực (ICU) nếu điểm từ 4&ndash;5.</li>
+    </ul>
+    <p><em>* Lưu ý: Thang điểm CURB-65 là công cụ hỗ trợ tiên lượng lâm sàng, quyết định điều trị cuối cùng cần kết hợp đánh giá toàn diện tình trạng bệnh nhân.</em></p>
+  </div>
+</div>
+
+<script>
+  const totalScoreEl = document.getElementById('total-score');
+  const statusBadgeEl = document.getElementById('status-badge');
+  const statusDescEl = document.getElementById('status-desc');
+  const resultCardEl = document.getElementById('result-card');
+
+  // Hàm tính tổng điểm dựa trên các checkbox đang được check
+  function calculateScore() {
+    let score = 0;
+    const checkedBoxes = document.querySelectorAll('.item-checkbox:checked');
+    checkedBoxes.forEach(cb => {
+      score += parseInt(cb.dataset.pts, 10);
+    });
+
+    totalScoreEl.textContent = score;
+
+    if (score === 0 || score === 1) {
+      statusBadgeEl.textContent = `Nguy cơ thấp (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-low-bg)';
+      statusBadgeEl.style.color = 'var(--status-low)';
+      resultCardEl.style.borderColor = '#86efac';
+      statusDescEl.innerHTML = `<strong>Nguy cơ tử vong thấp (${score === 0 ? '0.6%' : '2.7%'}):</strong> Thích hợp điều trị ngoại trú. Kê đơn kháng sinh theo phác đồ ngoại trú, dặn dò dấu hiệu tái khám.`;
+    } else if (score === 2) {
+      statusBadgeEl.textContent = `Nguy cơ trung bình (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-mod-bg)';
+      statusBadgeEl.style.color = 'var(--status-mod)';
+      resultCardEl.style.borderColor = '#fcd34d';
+      statusDescEl.innerHTML = '<strong>Nguy cơ tử vong trung bình (6.8%):</strong> Cân nhắc nhập viện điều trị nội trú ngắn hạn hoặc theo dõi cực kỳ chặt chẽ tại cơ sở y tế.';
+    } else if (score === 3 || score === 4) {
+      statusBadgeEl.textContent = `Nguy cơ cao (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-severe-bg)';
+      statusBadgeEl.style.color = 'var(--status-severe)';
+      resultCardEl.style.borderColor = '#fca5a5';
+      statusDescEl.innerHTML = `<strong>Nguy cơ tử vong cao (${score === 3 ? '14.0%' : '27.8%'}):</strong> Chỉ định nhập viện điều trị nội trú. Đánh giá khả năng cần hỗ trợ hô hấp và cân nhắc nhập ICU.`;
+    } else {
+      statusBadgeEl.textContent = `Nguy cơ rất cao (${score} điểm)`;
+      statusBadgeEl.style.backgroundColor = '#7f1d1d';
+      statusBadgeEl.style.color = '#ffffff';
+      resultCardEl.style.borderColor = '#dc2626';
+      statusDescEl.innerHTML = '<strong>Nguy cơ tử vong rất cao (57.0%):</strong> Bệnh nhân viêm phổi rất nặng / sốc. Bắt buộc nhập khoa Hồi sức tích cực (ICU) để hồi sức chuyên sâu ngay lập tức.';
+    }
+  }
+
+  // Lắng nghe sự kiện thay đổi trực tiếp trên từng checkbox
+  document.querySelectorAll('.item-card').forEach(card => {
+    const cb = card.querySelector('.item-checkbox');
+    
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+      calculateScore();
+    });
+  });
+
+  // Tìm kiếm nhanh tiêu chí
+  const searchInput = document.getElementById('quick-search');
+  searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.item-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      if (text.includes(term)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+
+  // Nút đặt lại (Reset)
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    document.querySelectorAll('.item-checkbox').forEach(cb => {
+      cb.checked = false;
+      cb.closest('.item-card').classList.remove('selected');
+    });
+    calculateScore();
+  });
+
+  // Khởi tạo điểm ban đầu
+  calculateScore();
+</script>
+
+</body>
+</html>
