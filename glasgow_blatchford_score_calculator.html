@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Glasgow-Blatchford (GBS) - Đánh giá xuất huyết tiêu hóa trên</title>
+  <meta name="specialty" content="Tiêu hóa / Hồi sức cấp cứu">
+  <meta name="description" content="Thang điểm Glasgow-Blatchford giúp phân tầng nguy cơ và xác định bệnh nhân xuất huyết tiêu hóa trên có thể điều trị ngoại trú an toàn hay cần can thiệp nội soi khẩn cấp.">
+  
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+
+      /* Risk Color Levels */
+      --very-low-bg: #f0fdf4;
+      --very-low-border: #bbf7d0;
+      --very-low-text: #166534;
+      --very-low-badge: #16a34a;
+
+      --moderate-bg: #fffbebfb;
+      --moderate-border: #fef08a;
+      --moderate-text: #854d0e;
+      --moderate-badge: #d97706;
+
+      --high-bg: #fef2f2;
+      --high-border: #fecaca;
+      --high-text: #991b1b;
+      --high-badge: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .desc {
+      color: var(--subtext);
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .label-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .sub-label {
+      font-size: 12px;
+      color: var(--subtext);
+      font-weight: normal;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-opt {
+      flex: 1;
+      min-width: 90px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text);
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-opt:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .btn-opt.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+    }
+
+    .unit-toggle {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 2px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .unit-btn {
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--subtext);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .unit-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .result-box {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .result-box.empty {
+      text-align: center;
+      color: var(--subtext);
+      padding: 28px 20px;
+    }
+
+    .result-box.risk-very-low {
+      background-color: var(--very-low-bg);
+      border-color: var(--very-low-border);
+      color: var(--very-low-text);
+    }
+
+    .result-box.risk-moderate {
+      background-color: var(--moderate-bg);
+      border-color: var(--moderate-border);
+      color: var(--moderate-text);
+    }
+
+    .result-box.risk-high {
+      background-color: var(--high-bg);
+      border-color: var(--high-border);
+      color: var(--high-text);
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .score-val {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .tag-very-low { background: var(--very-low-badge); }
+    .tag-moderate { background: var(--moderate-badge); }
+    .tag-high { background: var(--high-badge); }
+
+    .rec-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 14px;
+      border: 1px solid rgba(0,0,0,0.05);
+      color: var(--text);
+    }
+
+    .rec-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .btn-reset {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--subtext);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-reset:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .guide {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13.5px;
+      color: var(--subtext);
+    }
+
+    .guide h3 {
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .guide ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .guide li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="badge">Tiêu hóa / Hồi sức cấp cứu</span>
+    <h1>Thang điểm Glasgow-Blatchford (GBS)</h1>
+    <p class="desc">Phân tầng nguy cơ bệnh nhân xuất huyết tiêu hóa trên cấp tính trước khi nội soi để xác định nhu cầu can thiệp y khoa hoặc khả năng xuất viện an toàn.</p>
+  </div>
+
+  <div class="card">
+    <!-- Giới tính -->
+    <div class="form-group">
+      <div class="label-header">
+        <label>Giới tính</label>
+      </div>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="gender" data-val="male" onclick="setOpt('gender', 'male')">Nam</button>
+        <button class="btn-opt" data-param="gender" data-val="female" onclick="setOpt('gender', 'female')">Nữ</button>
+      </div>
+    </div>
+
+    <!-- Hemoglobin -->
+    <div class="form-group">
+      <div class="label-header">
+        <label for="hb">Hemoglobin (Hb)</label>
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="unit-hb-gdL" onclick="setHbUnit('gdL')">g/dL</button>
+          <button class="unit-btn" id="unit-hb-gL" onclick="setHbUnit('gL')">g/L</button>
+        </div>
+      </div>
+      <div class="input-row">
+        <input type="number" id="hb" step="0.1" placeholder="Nhập nồng độ Hb" oninput="calculateScore()">
+      </div>
+    </div>
+
+    <!-- BUN / Ure máu -->
+    <div class="form-group">
+      <div class="label-header">
+        <label for="bun">Ure máu (BUN / Urea)</label>
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="unit-bun-mmol" onclick="setBunUnit('mmol')">mmol/L</button>
+          <button class="unit-btn" id="unit-bun-mg" onclick="setBunUnit('mg')">mg/dL</button>
+        </div>
+      </div>
+      <div class="input-row">
+        <input type="number" id="bun" step="0.1" placeholder="Nhập nồng độ Ure máu" oninput="calculateScore()">
+      </div>
+    </div>
+
+    <!-- Huyết áp tâm thu -->
+    <div class="form-group">
+      <div class="label-header">
+        <label for="sbp">Huyết áp tâm thu <span class="sub-label">(mmHg)</span></label>
+      </div>
+      <div class="input-row">
+        <input type="number" id="sbp" placeholder="Ví dụ: 110" oninput="calculateScore()">
+      </div>
+    </div>
+
+    <!-- Nhịp tim -->
+    <div class="form-group">
+      <div class="label-header">
+        <label for="hr">Tần số tim <span class="sub-label">(nhịp/phút)</span></label>
+      </div>
+      <div class="input-row">
+        <input type="number" id="hr" placeholder="Ví dụ: 85" oninput="calculateScore()">
+      </div>
+    </div>
+
+    <!-- Các triệu chứng & Tiền sử -->
+    <div class="form-group">
+      <div class="label-header">
+        <label>Tiêu phân đen (Melena)</label>
+      </div>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="melena" data-val="no" onclick="setOpt('melena', 'no')">Không (0đ)</button>
+        <button class="btn-opt" data-param="melena" data-val="yes" onclick="setOpt('melena', 'yes')">Có (+1đ)</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="label-header">
+        <label>Hiện diện ngất (Syncope)</label>
+      </div>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="syncope" data-val="no" onclick="setOpt('syncope', 'no')">Không (0đ)</button>
+        <button class="btn-opt" data-param="syncope" data-val="yes" onclick="setOpt('syncope', 'yes')">Có (+2đ)</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="label-header">
+        <label>Bệnh gan mạn tính <span class="sub-label">(Hepatic disease)</span></label>
+      </div>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="hepatic" data-val="no" onclick="setOpt('hepatic', 'no')">Không (0đ)</button>
+        <button class="btn-opt" data-param="hepatic" data-val="yes" onclick="setOpt('hepatic', 'yes')">Có (+2đ)</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="label-header">
+        <label>Suy tim <span class="sub-label">(Cardiac failure)</span></label>
+      </div>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="cardiac" data-val="no" onclick="setOpt('cardiac', 'no')">Không (0đ)</button>
+        <button class="btn-opt" data-param="cardiac" data-val="yes" onclick="setOpt('cardiac', 'yes')">Có (+2đ)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-reset" onclick="resetForm()">Đặt lại (Reset)</button>
+  </div>
+
+  <div class="result-box empty" id="result-box">
+    Vui lòng nhập đầy đủ các thông số sinh hiệu và xét nghiệm để tính điểm GBS.
+  </div>
+
+  <div class="guide">
+    <h3>Hướng dẫn & Diễn giải lâm sàng</h3>
+    <ul>
+      <li><strong>Mục đích:</strong> Thang điểm Glasgow-Blatchford (GBS) đánh giá nguy cơ cần can thiệp y khoa (truyền máu, cầm máu qua nội soi, phẫu thuật) hoặc nguy cơ tử vong ở bệnh nhân xuất huyết tiêu hóa trên.</li>
+      <li><strong>Phân tầng nguy cơ lâm sàng:</strong>
+        <ul>
+          <li><strong>GBS = 0 điểm:</strong> Nguy cơ rất thấp (&lt; 1% cần can thiệp hoặc tử vong). Bệnh nhân có thể điều trị ngoại trú an toàn không cần nhập viện cấp cứu.</li>
+          <li><strong>GBS 1 - 5 điểm:</strong> Nguy cơ thấp/trung bình. Cần theo dõi, cân nhắc nội soi can thiệp trong vòng 24 giờ.</li>
+          <li><strong>GBS ≥ 6 điểm:</strong> Nguy cơ cao (&gt; 50% cần can thiệp y khoa). Bệnh nhân bắt buộc nhập viện, hồi sức tích cực, truyền máu và nội soi cấp cứu.</li>
+        </ul>
+      </li>
+      <li><strong>Tiêu chuẩn bệnh gan mạn:</strong> Tiền sử xơ gan, viêm gan mạn hoặc có bằng chứng lâm sàng/xét nghiệm của suy gan mạn.</li>
+      <li><strong>Tiêu chuẩn suy tim:</strong> Tiền sử suy tim, bệnh cơ tim hoặc có biểu hiện suy tim cấp/mạn trên lâm sàng.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  let params = {
+    gender: null,
+    melena: null,
+    syncope: null,
+    hepatic: null,
+    cardiac: null
+  };
+
+  let hbUnit = 'gdL'; // 'gdL' or 'gL'
+  let bunUnit = 'mmol'; // 'mmol' or 'mg'
+
+  function setOpt(param, val) {
+    params[param] = val;
+    document.querySelectorAll(`[data-param="${param}"]`).forEach(btn => {
+      if (btn.getAttribute('data-val') === val) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    calculateScore();
+  }
+
+  function setHbUnit(unit) {
+    if (hbUnit === unit) return;
+    hbUnit = unit;
+    document.getElementById('unit-hb-gdL').classList.toggle('active', unit === 'gdL');
+    document.getElementById('unit-hb-gL').classList.toggle('active', unit === 'gL');
+
+    const hbInput = document.getElementById('hb');
+    if (hbInput.value) {
+      if (unit === 'gL') {
+        hbInput.value = (parseFloat(hbInput.value) * 10).toFixed(0);
+      } else {
+        hbInput.value = (parseFloat(hbInput.value) / 10).toFixed(1);
+      }
+    }
+    calculateScore();
+  }
+
+  function setBunUnit(unit) {
+    if (bunUnit === unit) return;
+    bunUnit = unit;
+    document.getElementById('unit-bun-mmol').classList.toggle('active', unit === 'mmol');
+    document.getElementById('unit-bun-mg').classList.toggle('active', unit === 'mg');
+
+    const bunInput = document.getElementById('bun');
+    if (bunInput.value) {
+      if (unit === 'mg') {
+        // 1 mmol/L Urea = 2.8 mg/dL BUN (approx.)
+        bunInput.value = (parseFloat(bunInput.value) * 2.801).toFixed(1);
+      } else {
+        bunInput.value = (parseFloat(bunInput.value) / 2.801).toFixed(1);
+      }
+    }
+    calculateScore();
+  }
+
+  function calculateScore() {
+    const hbVal = parseFloat(document.getElementById('hb').value);
+    const bunVal = parseFloat(document.getElementById('bun').value);
+    const sbp = parseFloat(document.getElementById('sbp').value);
+    const hr = parseFloat(document.getElementById('hr').value);
+
+    if (isNaN(hbVal) || isNaN(bunVal) || isNaN(sbp) || isNaN(hr) || 
+        !params.gender || !params.melena || !params.syncope || !params.hepatic || !params.cardiac) {
+      renderEmpty();
+      return;
+    }
+
+    // Standardize Hb to g/dL
+    const hb = hbUnit === 'gL' ? hbVal / 10 : hbVal;
+    
+    // Standardize BUN to mmol/L
+    const bun = bunUnit === 'mg' ? bunVal / 2.801 : bunVal;
+
+    let score = 0;
+
+    // 1. BUN scoring
+    if (bun >= 25) score += 6;
+    else if (bun >= 10) score += 4;
+    else if (bun >= 8) score += 3;
+    else if (bun >= 6.5) score += 2;
+
+    // 2. Hemoglobin scoring
+    if (params.gender === 'male') {
+      if (hb < 10.0) score += 6;
+      else if (hb >= 10.0 && hb < 12.0) score += 3;
+      else if (hb >= 12.0 && hb < 13.0) score += 1;
+    } else { // female
+      if (hb < 10.0) score += 6;
+      else if (hb >= 10.0 && hb < 12.0) score += 1;
+    }
+
+    // 3. Systolic BP scoring
+    if (sbp < 90) score += 3;
+    else if (sbp >= 90 && sbp <= 99) score += 2;
+    else if (sbp >= 100 && sbp <= 109) score += 1;
+
+    // 4. Heart Rate scoring
+    if (hr >= 100) score += 1;
+
+    // 5. Clinical parameters
+    if (params.melena === 'yes') score += 1;
+    if (params.syncope === 'yes') score += 2;
+    if (params.hepatic === 'yes') score += 2;
+    if (params.cardiac === 'yes') score += 2;
+
+    renderResult(score);
+  }
+
+  function renderEmpty() {
+    const box = document.getElementById('result-box');
+    box.className = "result-box empty";
+    box.innerHTML = "Vui lòng nhập đầy đủ các thông số sinh hiệu và xét nghiệm để tính điểm GBS.";
+  }
+
+  function renderResult(score) {
+    const box = document.getElementById('result-box');
+
+    let categoryClass = '';
+    let tagClass = '';
+    let tagText = '';
+    let recommendation = '';
+
+    if (score === 0) {
+      categoryClass = 'risk-very-low';
+      tagClass = 'tag-very-low';
+      tagText = 'Nguy cơ RẤT THẤP (GBS = 0)';
+      recommendation = 'Bệnh nhân có thể xem xét điều trị <strong>ngoại trú an toàn</strong> không cần nhập viện. Tỷ lệ cần can thiệp y khoa hoặc tử vong &lt; 1%.';
+    } else if (score >= 1 && score <= 5) {
+      categoryClass = 'risk-moderate';
+      tagClass = 'tag-moderate';
+      tagText = 'Nguy cơ THẤP - TRUNG BÌNH';
+      recommendation = 'Nhập viện theo dõi. Cân nhắc tiến hành <strong>nội soi tiêu hóa trong vòng 24 giờ</strong> để đánh giá tổn thương và xử trí thích hợp.';
+    } else { // score >= 6
+      categoryClass = 'risk-high';
+      tagClass = 'tag-high';
+      tagText = 'Nguy cơ CAO (GBS ≥ 6)';
+      recommendation = '<strong>CẢNH BÁO:</strong> Bệnh nhân có nguy cơ cao cần can thiệp y khoa (> 50%). Bắt buộc <strong>nhập viện khẩn cấp</strong>, hồi sức tích cực, truyền máu/chế phẩm máu và tiến hành <strong>nội soi cấp cứu</strong>.';
+    }
+
+    box.className = `result-box ${categoryClass}`;
+    box.innerHTML = `
+      <div class="score-header">
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; opacity: 0.8;">Tổng điểm GBS</div>
+          <div class="score-val">${score} điểm</div>
+        </div>
+        <span class="tag ${tagClass}">${tagText}</span>
+      </div>
+      <div class="rec-card">
+        <h4>Gợi ý hướng xử trí lâm sàng</h4>
+        <div>${recommendation}</div>
+      </div>
+    `;
+  }
+
+  function resetForm() {
+    document.getElementById('hb').value = '';
+    document.getElementById('bun').value = '';
+    document.getElementById('sbp').value = '';
+    document.getElementById('hr').value = '';
+
+    params = {
+      gender: null,
+      melena: null,
+      syncope: null,
+      hepatic: null,
+      cardiac: null
+    };
+
+    document.querySelectorAll('.btn-opt').forEach(btn => btn.classList.remove('active'));
+    renderEmpty();
+  }
+</script>
+</body>
+</html>

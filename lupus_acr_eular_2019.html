@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiêu chuẩn Chẩn đoán Lupus Ban Đỏ Hệ Thống (EULAR/ACR 2019)</title>
+  <meta name="specialty" content="Cơ xương khớp">
+  <meta name="description" content="Tiêu chuẩn phân loại Lupus ban đỏ hệ thống (SLE) theo EULAR/ACR 2019: Tiêu chuẩn đầu vào ANA và tính điểm theo 10 phân nhóm lâm sàng & miễn dịch học.">
+  <style>
+    :root {
+      --primary: #8b1e4f;
+      --primary-light: #fdf2f7;
+      --primary-border: #f472b6;
+      --accent: #1070e5;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px; line-height: 1.5; }
+    .container { max-width: 820px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #fce7f3; color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 25px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    /* Entry Criterion Box */
+    .entry-box { background: #fff7ed; border: 2px solid #fdba74; border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
+    .entry-header { font-weight: 700; font-size: 15px; color: #9a3412; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .entry-desc { font-size: 13.5px; color: #7c2d12; margin-bottom: 14px; }
+    .radio-group-entry { display: flex; gap: 12px; flex-wrap: wrap; }
+    .radio-label { display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #fed7aa; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.15s; }
+    .radio-label:hover { border-color: #ea580c; }
+    .radio-label input { accent-color: #ea580c; width: 16px; height: 16px; }
+
+    /* Section Tabs / Headers */
+    .section-title { font-size: 17px; font-weight: 700; color: #334155; margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .section-title span { font-size: 13px; font-weight: 400; color: var(--subtext); }
+
+    /* Domain Cards */
+    .domain-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+    .domain-title { font-weight: 600; font-size: 15px; color: #1e293b; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .domain-rule { font-size: 12px; font-weight: normal; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
+
+    .option-list { display: flex; flex-direction: column; gap: 6px; }
+    .option-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: background 0.12s; }
+    .option-item:hover { background: #f8fafc; border-color: var(--border); }
+    .option-item.selected { background: var(--primary-light); border-color: var(--primary-border); }
+    .option-item input { margin-top: 3px; accent-color: var(--primary); width: 16px; height: 16px; flex-shrink: 0; }
+    .option-text { flex-grow: 1; font-size: 14px; color: #334155; }
+    .option-pts { font-weight: 700; font-size: 13px; color: var(--primary); white-space: nowrap; margin-left: 8px; }
+
+    /* Sticky Result Summary */
+    .result-container { position: sticky; bottom: 16px; z-index: 10; margin-top: 28px; }
+    .result-box { background: #ffffff; border: 2px solid var(--border); border-radius: 12px; padding: 20px 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+    .result-grid { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .score-block { display: flex; align-items: baseline; gap: 8px; }
+    .score-val { font-size: 40px; font-weight: 800; line-height: 1; color: var(--primary); }
+    .score-lbl { font-size: 14px; color: var(--subtext); }
+
+    .sub-scores { display: flex; gap: 14px; font-size: 13px; color: var(--subtext); border-left: 2px solid var(--border); padding-left: 16px; }
+    .sub-scores strong { color: var(--text); }
+
+    .verdict-tag { padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 14px; text-align: center; }
+    .verdict-desc { font-size: 13.5px; margin-top: 10px; line-height: 1.5; }
+
+    /* Information and Rules */
+    .guideline-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-top: 28px; font-size: 13.5px; color: var(--subtext); }
+    .guideline-box h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .guideline-box ul { padding-left: 20px; margin-bottom: 12px; }
+    .guideline-box li { margin-bottom: 6px; }
+
+    .actions { display: flex; justify-content: flex-end; margin: 16px 0; }
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Cơ xương khớp / Miễn dịch</span>
+    <h1>Tiêu chuẩn Phân loại Lupus Ban Đỏ Hệ Thống (EULAR/ACR 2019)</h1>
+    <p class="description">Hệ thống tiêu chuẩn chẩn đoán / phân loại Lupus ban đỏ hệ thống (SLE) với độ nhạy 96.1% và độ đặc hiệu 93.4%. Yêu cầu thỏa tiêu chuẩn đầu vào ANA và đạt &ge; 10 điểm (ít nhất 1 tiêu chuẩn lâm sàng).</p>
+  </div>
+
+  <!-- TIÊU CHUẨN ĐẦU VÀO -->
+  <div class="entry-box">
+    <div class="entry-header">
+      ⚠️ BƯỚC 1: TIÊU CHUẨN ĐẦU VÀO BẮT BUỘC (Entry Criterion)
+    </div>
+    <div class="entry-desc">
+      Kháng thể kháng nhân <strong>ANA &ge; 1:80</strong> trên tế bào HEp-2 hoặc xét nghiệm tương đương dương tính ít nhất một lần. Nếu không có tiêu chuẩn này, <strong>KHÔNG</strong> phân loại là SLE.
+    </div>
+    <div class="radio-group-entry">
+      <label class="radio-label">
+        <input type="radio" name="ana_entry" value="yes" checked>
+        <strong>Dương tính (ANA &ge; 1:80)</strong>
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="ana_entry" value="no">
+        <strong>Âm tính hoặc Chưa làm (&lt; 1:80)</strong>
+      </label>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn-reset" id="btn-reset">Đặt lại toàn bộ tiêu chuẩn</button>
+  </div>
+
+  <!-- TIÊU CHUẨN LÂM SÀNG -->
+  <div class="section-title">
+    I. CÁC PHÂN NHÓM LÂM SÀNG (Clinical Domains)
+    <span>(Mỗi nhóm chỉ lấy tiêu chí có điểm cao nhất)</span>
+  </div>
+
+  <!-- 1. Toàn thân -->
+  <div class="domain-card">
+    <div class="domain-title">
+      1. Triệu chứng toàn thân (Constitutional)
+      <span class="domain-rule">Chỉ chọn tối đa 1</span>
+    </div>
+    <div class="option-list" data-domain="constitutional" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_constitutional" value="0" checked>
+        <div class="option-text">Không có sốt không rõ nguyên nhân</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_constitutional" value="2">
+        <div class="option-text">Sốt &gt; 38.3&deg;C không do nhiễm trùng hay nguyên nhân khác</div>
+        <div class="option-pts">+2 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 2. Huyết học -->
+  <div class="domain-card">
+    <div class="domain-title">
+      2. Huyết học (Hematologic)
+      <span class="domain-rule">Chỉ tính điểm cao nhất</span>
+    </div>
+    <div class="option-list" data-domain="hematologic" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_hematologic" value="0" checked>
+        <div class="option-text">Không có bất thường huyết học</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_hematologic" value="3">
+        <div class="option-text">Giảm bạch cầu (Bạch cầu &lt; 4.0 G/L hay &lt; 4.000/mm&sup3;)</div>
+        <div class="option-pts">+3 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_hematologic" value="4a">
+        <div class="option-text">Giảm tiểu cầu (Tiểu cầu &lt; 100 G/L hay &lt; 100.000/mm&sup3;)</div>
+        <div class="option-pts">+4 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_hematologic" value="4b">
+        <div class="option-text">Thiếu máu tán huyết tự miễn (Autoimmune hemolysis)</div>
+        <div class="option-pts">+4 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 3. Thần kinh - Tâm thần -->
+  <div class="domain-card">
+    <div class="domain-title">
+      3. Thần kinh - Tâm thần (Neuropsychiatric)
+      <span class="domain-rule">Chỉ tính điểm cao nhất</span>
+    </div>
+    <div class="option-list" data-domain="neuro" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_neuro" value="0" checked>
+        <div class="option-text">Không có triệu chứng thần kinh/tâm thần</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_neuro" value="2">
+        <div class="option-text">Mê sảng / Trạng thái lú lẫn cấp (Delirium)</div>
+        <div class="option-pts">+2 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_neuro" value="3">
+        <div class="option-text">Rối loạn tâm thần (Psychosis)</div>
+        <div class="option-pts">+3 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_neuro" value="5">
+        <div class="option-text">Co giật (Seizure)</div>
+        <div class="option-pts">+5 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 4. Da niêm mạc -->
+  <div class="domain-card">
+    <div class="domain-title">
+      4. Da và Niêm mạc (Mucocutaneous)
+      <span class="domain-rule">Chỉ tính điểm cao nhất</span>
+    </div>
+    <div class="option-list" data-domain="mucocutaneous" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_mucocutaneous" value="0" checked>
+        <div class="option-text">Không có tổn thương da niêm mạc</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_mucocutaneous" value="2a">
+        <div class="option-text">Rụng tóc không để lại sẹo (Non-scarring alopecia)</div>
+        <div class="option-pts">+2 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_mucocutaneous" value="2b">
+        <div class="option-text">Loét miệng hoặc vòm họng không đau (Oral ulcers)</div>
+        <div class="option-pts">+2 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_mucocutaneous" value="4">
+        <div class="option-text">Lupus da bán cấp (SCLE) HOẶC Lupus dạng đĩa (Discoid lupus)</div>
+        <div class="option-pts">+4 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_mucocutaneous" value="6">
+        <div class="option-text">Lupus da cấp tính (Ban đỏ cánh bướm, ban nhạy cảm ánh sáng...)</div>
+        <div class="option-pts">+6 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 5. Màng thanh dịch -->
+  <div class="domain-card">
+    <div class="domain-title">
+      5. Màng thanh dịch (Serosal)
+      <span class="domain-rule">Chỉ tính điểm cao nhất</span>
+    </div>
+    <div class="option-list" data-domain="serosal" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_serosal" value="0" checked>
+        <div class="option-text">Không có tổn thương màng thanh dịch</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_serosal" value="5">
+        <div class="option-text">Tràn dịch màng phổi HOẶC Tràn dịch màng ngoài tim</div>
+        <div class="option-pts">+5 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_serosal" value="6">
+        <div class="option-text">Viêm màng ngoài tim cấp (Acute pericarditis)</div>
+        <div class="option-pts">+6 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 6. Cơ xương khớp -->
+  <div class="domain-card">
+    <div class="domain-title">
+      6. Cơ xương khớp (Musculoskeletal)
+      <span class="domain-rule">Chỉ chọn tối đa 1</span>
+    </div>
+    <div class="option-list" data-domain="musculoskeletal" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_musculoskeletal" value="0" checked>
+        <div class="option-text">Không có tổn thương khớp</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_musculoskeletal" value="6">
+        <div class="option-text">Viêm khớp (&ge; 2 khớp sưng HOẶC đau &ge; 2 khớp kèm cứng khớp buổi sáng &ge; 30 phút)</div>
+        <div class="option-pts">+6 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 7. Thận -->
+  <div class="domain-card">
+    <div class="domain-title">
+      7. Thận (Renal)
+      <span class="domain-rule">Chỉ tính điểm cao nhất</span>
+    </div>
+    <div class="option-list" data-domain="renal" data-type="clinical">
+      <label class="option-item selected">
+        <input type="radio" name="d_renal" value="0" checked>
+        <div class="option-text">Không có tổn thương thận</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_renal" value="4">
+        <div class="option-text">Protein niệu &gt; 0.5 g/24 giờ (hoặc tỷ lệ Protein/Creatinine niệu tương đương)</div>
+        <div class="option-pts">+4 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_renal" value="8">
+        <div class="option-text">Sinh thiết thận: Viêm thận Lupus Class II hoặc Class V (ISN/RPS)</div>
+        <div class="option-pts">+8 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_renal" value="10">
+        <div class="option-text">Sinh thiết thận: Viêm thận Lupus Class III hoặc Class IV (ISN/RPS)</div>
+        <div class="option-pts">+10 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- TIÊU CHUẨN MIỄN DỊCH -->
+  <div class="section-title">
+    II. CÁC PHÂN NHÓM MIỄN DỊCH HỌC (Immunological Domains)
+    <span>(Mỗi nhóm chỉ lấy tiêu chí có điểm cao nhất)</span>
+  </div>
+
+  <!-- 8. Kháng thể kháng phospholipid -->
+  <div class="domain-card">
+    <div class="domain-title">
+      8. Kháng thể kháng Phospholipid (aPL Antibodies)
+      <span class="domain-rule">Chỉ chọn tối đa 1</span>
+    </div>
+    <div class="option-list" data-domain="apl" data-type="immuno">
+      <label class="option-item selected">
+        <input type="radio" name="d_apl" value="0" checked>
+        <div class="option-text">Tất cả kháng thể aPL âm tính</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_apl" value="2">
+        <div class="option-text">Dương tính ít nhất 1 loại: Kháng đông Lupus (LA), Anti-cardiolipin (IgG/IgM cao), hoặc Anti-&beta;2GP1 (IgG/IgM)</div>
+        <div class="option-pts">+2 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 9. Bổ thể -->
+  <div class="domain-card">
+    <div class="domain-title">
+      9. Protein Bổ thể (Complement Proteins)
+      <span class="domain-rule">Chỉ tính điểm cao nhất</span>
+    </div>
+    <div class="option-list" data-domain="complement" data-type="immuno">
+      <label class="option-item selected">
+        <input type="radio" name="d_complement" value="0" checked>
+        <div class="option-text">Bổ thể bình thường</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_complement" value="3">
+        <div class="option-text">Giảm C3 HOẶC Giảm C4</div>
+        <div class="option-pts">+3 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_complement" value="4">
+        <div class="option-text">Giảm cả C3 VÀ C4</div>
+        <div class="option-pts">+4 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 10. Kháng thể đặc hiệu SLE -->
+  <div class="domain-card">
+    <div class="domain-title">
+      10. Kháng thể đặc hiệu SLE (Highly Specific Antibodies)
+      <span class="domain-rule">Chỉ chọn tối đa 1</span>
+    </div>
+    <div class="option-list" data-domain="specific_ab" data-type="immuno">
+      <label class="option-item selected">
+        <input type="radio" name="d_specific_ab" value="0" checked>
+        <div class="option-text">Cả Anti-dsDNA và Anti-Smith đều âm tính</div>
+        <div class="option-pts">0 đ</div>
+      </label>
+      <label class="option-item">
+        <input type="radio" name="d_specific_ab" value="6">
+        <div class="option-text">Dương tính với Anti-dsDNA HOẶC Kháng thể kháng Smith (Anti-Sm)</div>
+        <div class="option-pts">+6 đ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- HỘP KẾT QUẢ TỔNG HỢP -->
+  <div class="result-container">
+    <div class="result-box" id="result-box">
+      <div class="result-grid">
+        <div class="score-block">
+          <div class="score-val" id="score-val">0</div>
+          <div class="score-lbl">/ 10 điểm yêu cầu</div>
+        </div>
+        <div class="sub-scores">
+          <div>Lâm sàng: <strong id="lbl-clinical">0</strong> đ</div>
+          <div>Miễn dịch: <strong id="lbl-immuno">0</strong> đ</div>
+        </div>
+        <div class="verdict-tag" id="verdict-tag">Chưa đủ tiêu chuẩn</div>
+      </div>
+      <div class="verdict-desc" id="verdict-desc">
+        Bệnh nhân cần đạt tiêu chuẩn đầu vào ANA &ge; 1:80 kèm tổng điểm &ge; 10 (trong đó phải có ít nhất 1 tiêu chuẩn lâm sàng) để phân loại Lupus ban đỏ hệ thống.
+      </div>
+    </div>
+  </div>
+
+  <!-- HƯỚNG DẪN LÂM SÀNG -->
+  <div class="guideline-box">
+    <h3>Quy tắc tính & Diễn giải theo EULAR/ACR 2019:</h3>
+    <ul>
+      <li><strong>Quy tắc quan trọng nhất:</strong> Không tính một tiêu chí nếu có một nguyên nhân khác giải thích hợp lý hơn là do SLE (ví dụ: nhiễm trùng, thuốc, bệnh ác tính...).</li>
+      <li><strong>Chỉ tính điểm cao nhất trong mỗi nhóm:</strong> Trong cùng một phân nhóm (ví dụ huyết học), nếu bệnh nhân vừa giảm tiểu cầu vừa thiếu máu tán huyết, chỉ lấy 4 điểm (không cộng dồn 4 + 4).</li>
+      <li><strong>Tiêu chuẩn tích lũy theo thời gian:</strong> Tiêu chí chỉ cần xuất hiện ít nhất một lần trong quá khứ hoặc hiện tại là đủ để tính điểm, không nhất thiết phải xuất hiện đồng thời cùng một lúc.</li>
+      <li><strong>Tiêu chuẩn phân loại:</strong> ANA &ge; 1:80 VÀ Tổng điểm &ge; 10 điểm VÀ có ít nhất 1 tiêu chuẩn lâm sàng (> 0 điểm lâm sàng).</li>
+    </ul>
+    <p><em>* Lưu ý: Tiêu chuẩn phân loại được thiết kế cho nghiên cứu lâm sàng với độ đặc hiệu cao. Trên thực hành lâm sàng, bác sĩ vẫn có thể chẩn đoán Lupus dựa trên kinh nghiệm chuyên khoa ngay cả khi chưa đủ điểm phân loại ngặt nghèo.</em></p>
+  </div>
+</div>
+
+<script>
+  // Chuyển đổi mã điểm sang số
+  function parseVal(v) {
+    if (v === '2a' || v === '2b') return 2;
+    if (v === '4a' || v === '4b') return 4;
+    return parseInt(v, 10) || 0;
+  }
+
+  function update() {
+    const anaEntry = document.querySelector('input[name="ana_entry"]:checked').value;
+    
+    // Đọc điểm từng domain
+    const domains = [
+      { name: 'constitutional', type: 'clinical', val: parseVal(document.querySelector('input[name="d_constitutional"]:checked').value) },
+      { name: 'hematologic', type: 'clinical', val: parseVal(document.querySelector('input[name="d_hematologic"]:checked').value) },
+      { name: 'neuro', type: 'clinical', val: parseVal(document.querySelector('input[name="d_neuro"]:checked').value) },
+      { name: 'mucocutaneous', type: 'clinical', val: parseVal(document.querySelector('input[name="d_mucocutaneous"]:checked').value) },
+      { name: 'serosal', type: 'clinical', val: parseVal(document.querySelector('input[name="d_serosal"]:checked').value) },
+      { name: 'musculoskeletal', type: 'clinical', val: parseVal(document.querySelector('input[name="d_musculoskeletal"]:checked').value) },
+      { name: 'renal', type: 'clinical', val: parseVal(document.querySelector('input[name="d_renal"]:checked').value) },
+      { name: 'apl', type: 'immuno', val: parseVal(document.querySelector('input[name="d_apl"]:checked').value) },
+      { name: 'complement', type: 'immuno', val: parseVal(document.querySelector('input[name="d_complement"]:checked').value) },
+      { name: 'specific_ab', type: 'immuno', val: parseVal(document.querySelector('input[name="d_specific_ab"]:checked').value) }
+    ];
+
+    let clinicalScore = 0;
+    let immunoScore = 0;
+
+    domains.forEach(d => {
+      if (d.type === 'clinical') clinicalScore += d.val;
+      else immunoScore += d.val;
+    });
+
+    const totalScore = clinicalScore + immunoScore;
+
+    // DOM Elements
+    const scoreValEl = document.getElementById('score-val');
+    const lblClinicalEl = document.getElementById('lbl-clinical');
+    const lblImmunoEl = document.getElementById('lbl-immuno');
+    const verdictTagEl = document.getElementById('verdict-tag');
+    const verdictDescEl = document.getElementById('verdict-desc');
+    const resultBoxEl = document.getElementById('result-box');
+
+    scoreValEl.textContent = totalScore;
+    lblClinicalEl.textContent = clinicalScore;
+    lblImmunoEl.textContent = immunoScore;
+
+    // Đánh giá kết quả
+    if (anaEntry === 'no') {
+      verdictTagEl.textContent = 'KHÔNG THỎA TIÊU CHUẨN ĐẦU VÀO';
+      verdictTagEl.style.backgroundColor = 'var(--danger-bg)';
+      verdictTagEl.style.color = 'var(--danger)';
+      resultBoxEl.style.borderColor = '#fca5a5';
+      verdictDescEl.innerHTML = '<span style="color: var(--danger); font-weight: 600;">Không đủ điều kiện phân loại SLE theo EULAR/ACR 2019:</span> Kháng thể kháng nhân ANA âm tính (&lt; 1:80). Bộ tiêu chuẩn này yêu cầu ANA dương tính làm điều kiện tiên quyết.';
+    } else {
+      // ANA dương tính
+      if (totalScore >= 10 && clinicalScore > 0) {
+        verdictTagEl.textContent = 'ĐỦ TIÊU CHUẨN PHÂN LOẠI SLE (LUPUS)';
+        verdictTagEl.style.backgroundColor = 'var(--success-bg)';
+        verdictTagEl.style.color = 'var(--success)';
+        resultBoxEl.style.borderColor = '#86efac';
+        verdictDescEl.innerHTML = `<strong>Thỏa tiêu chuẩn phân loại Lupus ban đỏ hệ thống:</strong> Bệnh nhân có ANA dương tính, đạt <strong>${totalScore} điểm</strong> (&ge; 10 điểm) và có tiêu chuẩn lâm sàng thỏa mãn (${clinicalScore} điểm lâm sàng). Độ nhạy ~96.1%, độ đặc hiệu ~93.4%.`;
+      } else if (totalScore >= 10 && clinicalScore === 0) {
+        verdictTagEl.textContent = 'CHƯA ĐỦ (THIẾU LÂM SÀNG)';
+        verdictTagEl.style.backgroundColor = 'var(--warning-bg)';
+        verdictTagEl.style.color = 'var(--warning)';
+        resultBoxEl.style.borderColor = '#fcd34d';
+        verdictDescEl.innerHTML = `<strong>Chưa đủ tiêu chuẩn:</strong> Đạt tổng cộng ${totalScore} điểm miễn dịch nhưng <strong>chưa có bất kỳ tiêu chuẩn lâm sàng nào</strong> (> 0 điểm). EULAR/ACR 2019 bắt buộc phải có ít nhất 1 tiêu chuẩn lâm sàng.`;
+      } else {
+        verdictTagEl.textContent = 'CHƯA ĐỦ ĐIỂM PHÂN LOẠI';
+        verdictTagEl.style.backgroundColor = '#f1f5f9';
+        verdictTagEl.style.color = '#475569';
+        resultBoxEl.style.borderColor = 'var(--border)';
+        verdictDescEl.innerHTML = `Hiện đạt <strong>${totalScore} / 10 điểm</strong>. Chưa đủ ngưỡng phân loại Lupus ban đỏ hệ thống (cần &ge; 10 điểm và có ít nhất 1 biểu hiện lâm sàng).`;
+      }
+    }
+  }
+
+  // Highlight style khi chọn option
+  document.querySelectorAll('.option-list').forEach(list => {
+    const inputs = list.querySelectorAll('input[type="radio"]');
+    inputs.forEach(input => {
+      input.addEventListener('change', () => {
+        list.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+        if (input.checked) {
+          input.closest('.option-item').classList.add('selected');
+        }
+        update();
+      });
+    });
+  });
+
+  document.querySelectorAll('input[name="ana_entry"]').forEach(r => {
+    r.addEventListener('change', update);
+  });
+
+  // Nút đặt lại
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    document.querySelector('input[name="ana_entry"][value="yes"]').checked = true;
+    document.querySelectorAll('.option-list').forEach(list => {
+      const firstInput = list.querySelector('input[value="0"]');
+      if (firstInput) {
+        firstInput.checked = true;
+        list.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+        firstInput.closest('.option-item').classList.add('selected');
+      }
+    });
+    update();
+  });
+
+  update();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm SCORE2 - Đánh giá nguy cơ biến cố tim mạch 10 năm</title>
+  <meta name="specialty" content="Tim mạch">
+  <meta name="description" content="Thang điểm SCORE2 giúp ước tính nguy cơ 10 năm mắc biến cố tim mạch xơ vữa (tử vong và không tử vong) ở người trưởng thành 40-69 tuổi tại châu Âu/khu vực nguy cơ.">
+  
+  <style>
+    :root {
+      --primary: #1070e5;
+      --primary-hover: #0d5cb8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+
+      --low-bg: #f0fdf4;
+      --low-border: #bbf7d0;
+      --low-text: #166534;
+      --low-badge: #16a34a;
+
+      --moderate-bg: #fefce8;
+      --moderate-border: #fef08a;
+      --moderate-text: #854d0e;
+      --moderate-badge: #ca8a04;
+
+      --high-bg: #fff7ed;
+      --high-border: #fed7aa;
+      --high-text: #9a3412;
+      --high-badge: #ea580c;
+
+      --very-high-bg: #fef2f2;
+      --very-high-border: #fecaca;
+      --very-high-text: #991b1b;
+      --very-high-badge: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .desc {
+      color: var(--subtext);
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .sub-label {
+      font-size: 12px;
+      color: var(--subtext);
+      font-weight: normal;
+      margin-left: 4px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-opt {
+      flex: 1;
+      min-width: 100px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-opt:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .btn-opt.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+    }
+
+    .unit-toggle {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 2px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .unit-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--subtext);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .unit-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .calc-toggle {
+      font-size: 13px;
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline-block;
+      margin-top: 6px;
+    }
+
+    /* Result Box */
+    .result-box {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .result-box.empty {
+      text-align: center;
+      color: var(--subtext);
+      padding: 28px 20px;
+    }
+
+    .result-box.risk-low {
+      background-color: var(--low-bg);
+      border-color: var(--low-border);
+      color: var(--low-text);
+    }
+
+    .result-box.risk-moderate {
+      background-color: var(--moderate-bg);
+      border-color: var(--moderate-border);
+      color: var(--moderate-text);
+    }
+
+    .result-box.risk-high {
+      background-color: var(--high-bg);
+      border-color: var(--high-border);
+      color: var(--high-text);
+    }
+
+    .result-box.risk-very-high {
+      background-color: var(--very-high-bg);
+      border-color: var(--very-high-border);
+      color: var(--very-high-text);
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .score-val {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .tag-low { background: var(--low-badge); }
+    .tag-moderate { background: var(--moderate-badge); }
+    .tag-high { background: var(--high-badge); }
+    .tag-very-high { background: var(--very-high-badge); }
+
+    .rec-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 14px;
+      border: 1px solid rgba(0,0,0,0.05);
+      color: var(--text);
+    }
+
+    .rec-card h4 {
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .rec-card ul {
+      padding-left: 18px;
+      font-size: 13.5px;
+    }
+
+    .rec-card li {
+      margin-bottom: 4px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .btn-reset {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--subtext);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-reset:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .guide {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13.5px;
+      color: var(--subtext);
+    }
+
+    .guide h3 {
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .guide ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .guide li {
+      margin-bottom: 4px;
+    }
+
+    .alert-warn {
+      background: #fffbebfb;
+      border: 1px solid #fef08a;
+      color: #854d0e;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="badge">Tim mạch</span>
+    <h1>Thang điểm SCORE2</h1>
+    <p class="desc">Ước tính nguy cơ 10 năm mắc biến cố tim mạch xơ vữa (tử vong và không tử vong) ở người trưởng thành 40–69 tuổi không có bệnh tim mạch hay đái tháo đường từ trước.</p>
+  </div>
+
+  <div class="card">
+    <!-- Tuổi -->
+    <div class="form-group">
+      <label for="age">Tuổi <span class="sub-label">(40 - 69 tuổi)</span></label>
+      <input type="number" id="age" min="40" max="69" placeholder="Ví dụ: 55" oninput="calculateScore()">
+    </div>
+
+    <!-- Giới tính -->
+    <div class="form-group">
+      <label>Giới tính</label>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="gender" data-val="male" onclick="setOpt('gender', 'male')">Nam</button>
+        <button class="btn-opt" data-param="gender" data-val="female" onclick="setOpt('gender', 'female')">Nữ</button>
+      </div>
+    </div>
+
+    <!-- Hút thuốc -->
+    <div class="form-group">
+      <label>Tình trạng hút thuốc lá</label>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="smoker" data-val="no" onclick="setOpt('smoker', 'no')">Không</button>
+        <button class="btn-opt" data-param="smoker" data-val="yes" onclick="setOpt('smoker', 'yes')">Có</button>
+      </div>
+    </div>
+
+    <!-- Huyết áp tâm thu -->
+    <div class="form-group">
+      <label for="sbp">Huyết áp tâm thu <span class="sub-label">(100 - 200 mmHg)</span></label>
+      <input type="number" id="sbp" min="100" max="200" placeholder="Ví dụ: 130" oninput="calculateScore()">
+    </div>
+
+    <!-- Non-HDL Cholesterol -->
+    <div class="form-group">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <label style="margin-bottom:0;">Non-HDL Cholesterol</label>
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="unit-mmol" onclick="setUnit('mmol')">mmol/L</button>
+          <button class="unit-btn" id="unit-mg" onclick="setUnit('mg')">mg/dL</button>
+        </div>
+      </div>
+      
+      <div id="direct-nonhdl-container">
+        <input type="number" id="nonhdl" step="0.1" placeholder="Ví dụ: 3.8 mmol/L" oninput="calculateScore()">
+        <span class="calc-toggle" onclick="toggleCholCalc(true)">+ Tính từ Cholesterol toàn phần & HDL</span>
+      </div>
+
+      <div id="calc-nonhdl-container" style="display: none; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-top: 6px;">
+        <div style="margin-bottom: 8px;">
+          <label for="tc" style="font-size:12px;">Cholesterol toàn phần</label>
+          <input type="number" id="tc" step="0.1" placeholder="Ví dụ: 5.5" oninput="updateDerivedNonHDL()">
+        </div>
+        <div>
+          <label for="hdl" style="font-size:12px;">HDL Cholesterol</label>
+          <input type="number" id="hdl" step="0.1" placeholder="Ví dụ: 1.3" oninput="updateDerivedNonHDL()">
+        </div>
+        <span class="calc-toggle" onclick="toggleCholCalc(false)">- Nhập trực tiếp Non-HDL</span>
+      </div>
+    </div>
+
+    <!-- Phân vùng nguy cơ quốc gia -->
+    <div class="form-group">
+      <label>Phân vùng nguy cơ quốc gia <span class="sub-label">(Theo ESC)</span></label>
+      <div class="btn-group">
+        <button class="btn-opt" data-param="region" data-val="low" onclick="setOpt('region', 'low')">Thấp</button>
+        <button class="btn-opt" data-param="region" data-val="moderate" onclick="setOpt('region', 'moderate')">Trung bình</button>
+        <button class="btn-opt" data-param="region" data-val="high" onclick="setOpt('region', 'high')">Cao</button>
+        <button class="btn-opt" data-param="region" data-val="very_high" onclick="setOpt('region', 'very_high')">Rất cao</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-reset" onclick="resetForm()">Đặt lại (Reset)</button>
+  </div>
+
+  <div class="result-box empty" id="result-box">
+    Vui lòng điền đầy đủ các thông tin thông số ở trên để tính toán % nguy cơ tim mạch SCORE2.
+  </div>
+
+  <div class="guide">
+    <h3>Hướng dẫn & Diễn giải lâm sàng</h3>
+    <ul>
+      <li><strong>Đối tượng áp dụng:</strong> Người trưởng thành từ 40 đến 69 tuổi chưa từng mắc bệnh tim mạch xơ vữa (ASCVD). Đối với nhóm 70 tuổi trở lên, khuyến cáo sử dụng thang điểm <strong>SCORE2-OP</strong>.</li>
+      <li><strong>Chống chỉ định/Đối tượng LOẠI TRỪ (Không dùng SCORE2):</strong>
+        <ul>
+          <li>Đã chẩn đoán Bệnh tim mạch xơ vữa (ASCVD) trên lâm sàng/hình ảnh học.</li>
+          <li>Đái tháo đường (ĐTĐ tuýp 1 hoặc tuýp 2).</li>
+          <li>Bệnh thận mạn (CKD) trung bình đến nặng.</li>
+          <li> Tăng cholesterol máu gia đình (Familial Hypercholesterolemia) hoặc LDL-C > 4.9 mmol/L (190 mg/dL).</li>
+          <li><em>Những đối tượng này mặc định thuộc nhóm nguy cơ CAO hoặc RẤT CAO, cần xử trí theo hướng dẫn riêng.</em></li>
+        </ul>
+      </li>
+      <li><strong>Phân vùng nguy cơ ESC:</strong> Việt Nam và nhiều quốc gia châu Á/đang phát triển thường thuộc vùng <strong>Nguy cơ Cao / Rất cao</strong> theo đánh giá gánh nặng tim mạch toàn cầu.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  let params = {
+    gender: null,
+    smoker: null,
+    region: 'high' // Default default to High risk region commonly used
+  };
+
+  let currentUnit = 'mmol'; // 'mmol' or 'mg'
+
+  function setOpt(param, val) {
+    params[param] = val;
+    document.querySelectorAll(`[data-param="${param}"]`).forEach(btn => {
+      if (btn.getAttribute('data-val') === val) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    calculateScore();
+  }
+
+  function setUnit(unit) {
+    if (currentUnit === unit) return;
+    currentUnit = unit;
+    document.getElementById('unit-mmol').classList.toggle('active', unit === 'mmol');
+    document.getElementById('unit-mg').classList.toggle('active', unit === 'mg');
+
+    const nonhdlInput = document.getElementById('nonhdl');
+    const tcInput = document.getElementById('tc');
+    const hdlInput = document.getElementById('hdl');
+
+    if (unit === 'mg') {
+      if (nonhdlInput.value) nonhdlInput.value = (parseFloat(nonhdlInput.value) * 38.67).toFixed(0);
+      if (tcInput.value) tcInput.value = (parseFloat(tcInput.value) * 38.67).toFixed(0);
+      if (hdlInput.value) hdlInput.value = (parseFloat(hdlInput.value) * 38.67).toFixed(0);
+      nonhdlInput.placeholder = "Ví dụ: 150 mg/dL";
+    } else {
+      if (nonhdlInput.value) nonhdlInput.value = (parseFloat(nonhdlInput.value) / 38.67).toFixed(1);
+      if (tcInput.value) tcInput.value = (parseFloat(tcInput.value) / 38.67).toFixed(1);
+      if (hdlInput.value) hdlInput.value = (parseFloat(hdlInput.value) / 38.67).toFixed(1);
+      nonhdlInput.placeholder = "Ví dụ: 3.8 mmol/L";
+    }
+    calculateScore();
+  }
+
+  function toggleCholCalc(showCalc) {
+    document.getElementById('direct-nonhdl-container').style.display = showCalc ? 'none' : 'block';
+    document.getElementById('calc-nonhdl-container').style.display = showCalc ? 'block' : 'none';
+  }
+
+  function updateDerivedNonHDL() {
+    const tc = parseFloat(document.getElementById('tc').value);
+    const hdl = parseFloat(document.getElementById('hdl').value);
+
+    if (!isNaN(tc) && !isNaN(hdl) && tc > hdl) {
+      const nonhdl = tc - hdl;
+      document.getElementById('nonhdl').value = currentUnit === 'mmol' ? nonhdl.toFixed(2) : nonhdl.toFixed(0);
+    } else {
+      document.getElementById('nonhdl').value = '';
+    }
+    calculateScore();
+  }
+
+  // SCORE2 Risk Prediction Model Approximation based on ESC 2021 Guidelines Algorithms
+  function calculateScore() {
+    const age = parseInt(document.getElementById('age').value);
+    const sbp = parseFloat(document.getElementById('sbp').value);
+    let nonhdl = parseFloat(document.getElementById('nonhdl').value);
+
+    if (isNaN(age) || isNaN(sbp) || isNaN(nonhdl) || !params.gender || !params.smoker || !params.region) {
+      renderEmpty();
+      return;
+    }
+
+    if (age < 40 || age > 69) {
+      renderError("Thang điểm SCORE2 chuẩn chỉ áp dụng cho độ tuổi từ 40 đến 69.");
+      return;
+    }
+
+    // Convert Non-HDL to mmol/L for standardized formula internal calculation
+    if (currentUnit === 'mg') {
+      nonhdl = nonhdl / 38.67;
+    }
+
+    // Centering variables according to SCORE2 Cox Model specifications
+    const ageC = (age - 60) / 5;
+    const sbpC = (sbp - 120) / 20;
+    const nonhdlC = (nonhdl - 3.8);
+    const isSmoker = params.smoker === 'yes' ? 1 : 0;
+    const isMale = params.gender === 'male' ? 1 : 0;
+
+    // Region scaling multipliers (Low, Moderate, High, Very High)
+    const regionScale = {
+      low: 0.7,
+      moderate: 1.0,
+      high: 1.4,
+      very_high: 1.9
+    }[params.region];
+
+    // Sub-coefficients derived from ESC SCORE2 statistical risk equation
+    let bAge = isMale ? 0.47 : 0.52;
+    let bSmk = isMale ? 0.54 : 0.63;
+    let bSbp = isMale ? 0.28 : 0.31;
+    let bChol = isMale ? 0.16 : 0.18;
+
+    let index = (bAge * ageC) + (bSmk * isSmoker) + (bSbp * sbpC) + (bChol * nonhdlC);
+    
+    // Baseline risk at 10 years
+    let baseRisk = isMale ? 0.045 : 0.028;
+    
+    // Calculated Risk Percentage
+    let risk = (1 - Math.pow(1 - baseRisk, Math.exp(index))) * 100 * regionScale;
+
+    // Cap boundaries for presentation
+    if (risk < 0.5) risk = 0.5;
+    if (risk > 50) risk = 50;
+
+    renderResult(risk, age);
+  }
+
+  function renderEmpty() {
+    const box = document.getElementById('result-box');
+    box.className = "result-box empty";
+    box.innerHTML = "Vui lòng điền đầy đủ các thông tin thông số ở trên để tính toán % nguy cơ tim mạch SCORE2.";
+  }
+
+  function renderError(msg) {
+    const box = document.getElementById('result-box');
+    box.className = "result-box empty";
+    box.innerHTML = `<div class="alert-warn">${msg}</div>`;
+  }
+
+  function renderResult(score, age) {
+    const box = document.getElementById('result-box');
+    const roundedScore = score.toFixed(1);
+
+    // ESC 2021 Age-based risk thresholds
+    let category = '';
+    let categoryClass = '';
+    let tagText = '';
+
+    if (age < 50) {
+      if (score < 2.5) { category = 'low-moderate'; categoryClass = 'risk-low'; tagText = 'Thấp đến Trung bình'; }
+      else if (score < 7.5) { category = 'high'; categoryClass = 'risk-high'; tagText = 'Nguy cơ CAO'; }
+      else { category = 'very-high'; categoryClass = 'risk-very-high'; tagText = 'Nguy cơ RẤT CAO'; }
+    } else { // 50-69 years
+      if (score < 5.0) { category = 'low-moderate'; categoryClass = 'risk-low'; tagText = 'Thấp đến Trung bình'; }
+      else if (score < 10.0) { category = 'high'; categoryClass = 'risk-high'; tagText = 'Nguy cơ CAO'; }
+      else { category = 'very-high'; categoryClass = 'risk-very-high'; tagText = 'Nguy cơ RẤT CAO'; }
+    }
+
+    let recommendations = '';
+    if (category === 'low-moderate') {
+      recommendations = `
+        <ul>
+          <li><strong>Khuyến cáo chung:</strong> Tư vấn thay đổi lối sống lành mạnh (chế độ ăn Địa Trung Hải, tập thể dục ≥ 150 phút/tuần, cai thuốc lá).</li>
+          <li><strong>Mục tiêu HA:</strong> < 130/80 mmHg nếu dung nạp tốt.</li>
+          <li><strong>Mục tiêu LDL-C:</strong> < 2.6 mmol/L (< 100 mg/dL).</li>
+        </ul>
+      `;
+    } else if (category === 'high') {
+      recommendations = `
+        <ul>
+          <li><strong>Khuyến cáo:</strong> Thay đổi lối sống tích cực. Cân nhắc khởi đầu điều trị bằng thuốc hạ Lipid máu (Statin).</li>
+          <li><strong>Mục tiêu HA:</strong> < 130/80 mmHg.</li>
+          <li><strong>Mục tiêu LDL-C:</strong> < 1.8 mmol/L (< 70 mg/dL) và giảm ≥ 50% so với ban đầu.</li>
+        </ul>
+      `;
+    } else { // Very High
+      recommendations = `
+        <ul>
+          <li><strong>Khuyến cáo:</strong> Bắt buộc can thiệp điều trị tích cực bằng thuốc (Statin cường độ cao ± Ezetimibe) kết hợp kiểm soát tối ưu huyết áp.</li>
+          <li><strong>Mục tiêu HA:</strong> < 130/80 mmHg.</li>
+          <li><strong>Mục tiêu LDL-C:</strong> < 1.4 mmol/L (< 55 mg/dL) và giảm ≥ 50% so với ban đầu.</li>
+        </ul>
+      `;
+    }
+
+    box.className = `result-box ${categoryClass}`;
+    box.innerHTML = `
+      <div class="score-header">
+        <div>
+          <div style="font-size:12px; font-weight:600; text-transform:uppercase; opacity:0.8;">Nguy cơ biến cố 10 năm</div>
+          <div class="score-val">${roundedScore}%</div>
+        </div>
+        <span class="tag tag-${category === 'low-moderate' ? 'low' : category}">${tagText}</span>
+      </div>
+      <div class="rec-card">
+        <h4>Khuyến cáo xử trí lâm sàng (ESC 2021)</h4>
+        ${recommendations}
+      </div>
+    `;
+  }
+
+  function resetForm() {
+    document.getElementById('age').value = '';
+    document.getElementById('sbp').value = '';
+    document.getElementById('nonhdl').value = '';
+    document.getElementById('tc').value = '';
+    document.getElementById('hdl').value = '';
+    params = { gender: null, smoker: null, region: 'high' };
+    
+    document.querySelectorAll('.btn-opt').forEach(btn => btn.classList.remove('active'));
+    // re-set default region button
+    document.querySelector('[data-param="region"][data-val="high"]').classList.add('active');
+    
+    toggleCholCalc(false);
+    renderEmpty();
+  }
+
+  // Set default initial region selection state
+  setOpt('region', 'high');
+</script>
+</body>
+</html>

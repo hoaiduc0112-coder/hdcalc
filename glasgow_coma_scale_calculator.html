@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Glasgow (GCS) - Đánh giá mức độ tri giác</title>
+  <meta name="specialty" content="Hồi sức cấp cứu / Thần kinh">
+  <meta name="description" content="Thang điểm Glasgow (GCS) giúp đánh giá nhanh mức độ hôn mê và tổn thương ý thức qua 3 phản ứng: Mắt (E), Lời nói (V), Vận động (M).">
+  
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+
+      /* Risk Color Variables */
+      --mild-bg: #f0fdf4;
+      --mild-border: #bbf7d0;
+      --mild-text: #166534;
+      --mild-badge: #16a34a;
+
+      --moderate-bg: #fffbebfb;
+      --moderate-border: #fef08a;
+      --moderate-text: #854d0e;
+      --moderate-badge: #d97706;
+
+      --severe-bg: #fef2f2;
+      --severe-border: #fecaca;
+      --severe-text: #991b1b;
+      --severe-badge: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .desc {
+      color: var(--subtext);
+      font-size: 14px;
+    }
+
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title span.val-badge {
+      background: #f1f5f9;
+      color: var(--subtext);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      color: var(--text);
+    }
+
+    .btn-option:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .btn-option.selected {
+      background: #f0f9ff;
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .opt-label {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .opt-score {
+      font-weight: 700;
+      font-size: 13px;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: inherit;
+    }
+
+    .btn-option.selected .opt-score {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Result Box Styling */
+    .result-box {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .result-box.empty {
+      text-align: center;
+      color: var(--subtext);
+      padding: 28px 20px;
+    }
+
+    .result-box.risk-mild {
+      background-color: var(--mild-bg);
+      border-color: var(--mild-border);
+      color: var(--mild-text);
+    }
+
+    .result-box.risk-moderate {
+      background-color: var(--moderate-bg);
+      border-color: var(--moderate-border);
+      color: var(--moderate-text);
+    }
+
+    .result-box.risk-severe {
+      background-color: var(--severe-bg);
+      border-color: var(--severe-border);
+      color: var(--severe-text);
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .score-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .score-num {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-breakdown {
+      font-size: 16px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .tag-mild { background: var(--mild-badge); }
+    .tag-moderate { background: var(--moderate-badge); }
+    .tag-severe { background: var(--severe-badge); }
+
+    .rec-box {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      padding: 14px;
+      border-left: 4px solid var(--primary);
+      color: var(--text);
+      margin-top: 12px;
+    }
+
+    .result-box.risk-mild .rec-box { border-left-color: var(--mild-badge); }
+    .result-box.risk-moderate .rec-box { border-left-color: var(--moderate-badge); }
+    .result-box.risk-severe .rec-box { border-left-color: var(--severe-badge); }
+
+    .rec-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .rec-desc {
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .btn-reset {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--subtext);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .guide {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13.5px;
+      color: var(--subtext);
+    }
+
+    .guide h3 {
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .guide ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .guide li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="badge">Hồi sức cấp cứu / Thần kinh</span>
+    <h1>Thang điểm Glasgow (GCS)</h1>
+    <p class="desc">Thang điểm Glasgow (Glasgow Coma Scale) giúp đánh giá nhanh mức độ hôn mê và tổn thương ý thức thông qua 3 phản ứng: Mắt (E), Lời nói (V) và Vận động (M).</p>
+  </div>
+
+  <!-- Phản ứng Mắt (E) -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>1. Phản ứng mở mắt (Eye Opening - E)</span>
+      <span class="val-badge" id="badge-e">Chưa chọn</span>
+    </div>
+    <div class="options-grid" id="container-e"></div>
+  </div>
+
+  <!-- Phản ứng Lời nói (V) -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>2. Phản ứng lời nói (Verbal Response - V)</span>
+      <span class="val-badge" id="badge-v">Chưa chọn</span>
+    </div>
+    <div class="options-grid" id="container-v"></div>
+  </div>
+
+  <!-- Phản ứng Vận động (M) -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>3. Phản ứng vận động (Motor Response - M)</span>
+      <span class="val-badge" id="badge-m">Chưa chọn</span>
+    </div>
+    <div class="options-grid" id="container-m"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-reset" onclick="resetForm()">Đặt lại (Reset)</button>
+  </div>
+
+  <!-- Khung kết quả -->
+  <div class="result-box empty" id="result-box">
+    Vui lòng chọn đầy đủ 3 tiêu chí (Mắt, Lời nói, Vận động) để tính tổng điểm Glasgow.
+  </div>
+
+  <!-- Hướng dẫn & Diễn giải lâm sàng -->
+  <div class="guide">
+    <h3>Hướng dẫn & Diễn giải lâm sàng</h3>
+    <p style="margin-bottom: 8px;"><strong>Phân loại mức độ tổn thương sọ não / tri giác:</strong></p>
+    <ul>
+      <li><strong>GCS 13 - 15 điểm:</strong> Tổn thương não nhẹ / Tri giác bình thường.</li>
+      <li><strong>GCS 9 - 12 điểm:</strong> Tổn thương não mức độ trung bình.</li>
+      <li><strong>GCS 3 - 8 điểm:</strong> Hôn mê nặng / Bệnh lý não nghiêm trọng.</li>
+    </ul>
+
+    <p style="margin-bottom: 8px;"><strong>Quy tắc lâm sàng quan trọng:</strong></p>
+    <ul>
+      <li><strong>Bảo vệ đường thở:</strong> Nguyên tắc kinh điển <em>"GCS ≤ 8, Intubate"</em> – Khi điểm GCS từ 8 trở xuống, bệnh nhân mất phản xạ bảo vệ đường thở, cần cân nhắc đặt nội khí quản cấp cứu.</li>
+      <li><strong>Mô tả chi tiết:</strong> Luôn ghi nhận chi tiết thành phần điểm (Ví dụ: E2V3M4 = 9 điểm) thay vì chỉ ghi tổng số điểm để giúp theo dõi diễn tiến tri giác lâm sàng.</li>
+      <li><strong>Lưu ý ghi nhận:</strong> Nếu không đánh giá được tiêu chí nào (ví dụ: sưng mắt không mở được [E1NT], đang đặt NKQ [V1T]), cần ghi rõ lý do.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Dynamic Option Datasets
+  const optionsE = [
+    { score: 4, code: "E4", label: "Mở mắt tự nhiên" },
+    { score: 3, code: "E3", label: "Mở mắt khi gọi / nghe tiếng nói" },
+    { score: 2, code: "E2", label: "Mở mắt khi kích thích đau" },
+    { score: 1, code: "E1", label: "Không mở mắt khi kích thích đau" }
+  ];
+
+  const optionsV = [
+    { score: 5, code: "V5", label: "Trả lời đúng, nhanh nhẹn, định hướng tốt" },
+    { score: 4, code: "V4", label: "Trả lời nhầm lẫn, lộn xộn" },
+    { score: 3, code: "V3", label: "Phát ngôn từ ngữ không thích hợp / rời rạc" },
+    { score: 2, code: "V2", label: "Kêu ầm ừ, ú ớ, âm thanh không rõ từ" },
+    { score: 1, code: "V1", label: "Không phát ra âm thanh khi kích thích đau" }
+  ];
+
+  const optionsM = [
+    { score: 6, code: "M6", label: "Làm theo lệnh vận động" },
+    { score: 5, code: "M5", label: "Gạt tay đúng chỗ (định vị được điểm đau)" },
+    { score: 4, code: "M4", label: "Co tay khi kích thích đau (rút lui khỏi điểm đau)" },
+    { score: 3, code: "M3", label: "Gấp cứng bất thường (gấp vỏ)" },
+    { score: 2, code: "M2", label: "Duỗi cứng bất thường (duỗi não)" },
+    { score: 1, code: "M1", label: "Không phản ứng vận động khi kích thích đau" }
+  ];
+
+  // State
+  let state = {
+    e: null,
+    v: null,
+    m: null
+  };
+
+  // Render option groups
+  function renderGroup(containerId, options, param) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = options.map(opt => {
+      const isSelected = state[param] && state[param].score === opt.score;
+      return `
+        <button type="button" class="btn-option ${isSelected ? 'selected' : ''}" onclick="selectOpt('${param}', ${opt.score}, '${opt.code}')">
+          <span class="opt-label">
+            <strong>${opt.code}:</strong> ${opt.label}
+          </span>
+          <span class="opt-score">+${opt.score} điểm</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function selectOpt(param, score, code) {
+    state[param] = { score, code };
+    
+    // Update badge text
+    document.getElementById(`badge-${param}`).innerText = `${code} (${score}đ)`;
+    
+    // Re-render and recalculate
+    renderAll();
+    calculateScore();
+  }
+
+  function renderAll() {
+    renderGroup('container-e', optionsE, 'e');
+    renderGroup('container-v', optionsV, 'v');
+    renderGroup('container-m', optionsM, 'm');
+  }
+
+  // Real-time calculation and result rendering
+  function calculateScore() {
+    const resultBox = document.getElementById('result-box');
+
+    if (!state.e || !state.v || !state.m) {
+      resultBox.className = "result-box empty";
+      resultBox.innerHTML = "Vui lòng chọn đầy đủ 3 tiêu chí (Mắt, Lời nói, Vận động) để tính tổng điểm Glasgow.";
+      return;
+    }
+
+    const total = state.e.score + state.v.score + state.m.score;
+    const breakdown = `${state.e.code}${state.v.code}${state.m.code}`;
+
+    let categoryClass = '';
+    let tagClass = '';
+    let categoryTitle = '';
+    let recommendation = '';
+
+    if (total >= 13) {
+      categoryClass = 'risk-mild';
+      tagClass = 'tag-mild';
+      categoryTitle = 'Chấn thương nhẹ / Tri giác bình thường';
+      recommendation = 'Bệnh nhân tỉnh táo hoặc tổn thương nhẹ. Tiếp tục theo dõi sát diễn tiến tri giác và dấu hiệu thần kinh khu trú.';
+    } else if (total >= 9) {
+      categoryClass = 'risk-moderate';
+      tagClass = 'tag-moderate';
+      categoryTitle = 'Tổn thương tri giác trung bình';
+      recommendation = 'Bệnh nhân lơ mơ, ngủ gà hoặc đáp ứng kém. Cần chụp CT-scanner sọ não khẩn cấp và theo dõi sát sát đường thở, tri giác.';
+    } else {
+      categoryClass = 'risk-severe';
+      tagClass = 'tag-severe';
+      categoryTitle = 'Hôn mê nặng (Chấn thương não nặng)';
+      recommendation = '<strong>CẢNH BÁO:</strong> Bệnh nhân hôn mê sâu. Cân nhắc <strong>đặt nội khí quản khẩn cấp</strong> để bảo vệ đường thở (GCS ≤ 8). Hồi sức tích cực & hội chẩn Thần kinh / Phẫu thuật thần kinh.';
+    }
+
+    resultBox.className = `result-box ${categoryClass}`;
+    resultBox.innerHTML = `
+      <div class="score-header">
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; opacity: 0.8; margin-bottom: 4px;">Tổng điểm Glasgow (GCS)</div>
+          <div class="score-display">
+            <span class="score-num">${total} điểm</span>
+            <span class="score-breakdown">(${breakdown})</span>
+          </div>
+        </div>
+        <span class="tag ${tagClass}">${categoryTitle}</span>
+      </div>
+      <div class="rec-box">
+        <div class="rec-title">Gợi ý hướng xử trí lâm sàng</div>
+        <div class="rec-desc">${recommendation}</div>
+      </div>
+    `;
+  }
+
+  function resetForm() {
+    state = { e: null, v: null, m: null };
+    document.getElementById('badge-e').innerText = 'Chưa chọn';
+    document.getElementById('badge-v').innerText = 'Chưa chọn';
+    document.getElementById('badge-m').innerText = 'Chưa chọn';
+    renderAll();
+    calculateScore();
+  }
+
+  // Initial setup
+  renderAll();
+</script>
+</body>
+</html>

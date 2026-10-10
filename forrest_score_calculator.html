@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Forrest - Phân loại tổn thương xuất huyết tiêu hóa trên qua nội soi</title>
+  <meta name="specialty" content="Tiêu hóa">
+  <meta name="description" content="Thang điểm Forrest phân loại tổn thương xuất huyết tiêu hóa trên qua nội soi, giúp đánh giá nguy cơ tái xuất huyết, tỷ lệ tử vong và định hướng can thiệp cầm máu qua nội soi.">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+
+      /* Risk levels */
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-text: #991b1b;
+      --danger-badge: #dc2626;
+
+      --warning-bg: #fffbebfb;
+      --warning-border: #fef08a;
+      --warning-text: #854d0e;
+      --warning-badge: #d97706;
+
+      --moderate-bg: #fefce8;
+      --moderate-border: #fef08a;
+      --moderate-text: #713f12;
+      --moderate-badge: #ca8a04;
+
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --success-text: #166534;
+      --success-badge: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .desc {
+      color: var(--subtext);
+      font-size: 14px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--subtext);
+      margin-bottom: 12px;
+    }
+
+    .options-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+    }
+
+    .option-card:hover {
+      border-color: #cbd5e1;
+      background-color: #f8fafc;
+    }
+
+    .option-card.selected {
+      border-color: var(--primary);
+      background-color: #f0f9ff;
+    }
+
+    .radio-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      margin-top: 2px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .option-card.selected .radio-circle {
+      border-color: var(--primary);
+      background-color: var(--primary);
+    }
+
+    .radio-circle::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background-color: #fff;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .option-card.selected .radio-circle::after {
+      display: block;
+    }
+
+    .option-content {
+      flex-grow: 1;
+    }
+
+    .option-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .forrest-tag {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .forrest-desc {
+      font-size: 14px;
+      color: var(--subtext);
+    }
+
+    .forrest-en {
+      font-size: 12px;
+      color: #64748b;
+      font-style: italic;
+    }
+
+    /* Result Box styling */
+    .result-box {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .result-box.empty {
+      text-align: center;
+      color: var(--subtext);
+      padding: 32px 20px;
+    }
+
+    .result-box.risk-very-high {
+      background-color: var(--danger-bg);
+      border-color: var(--danger-border);
+    }
+
+    .result-box.risk-high {
+      background-color: #fff7ed;
+      border-color: #fed7aa;
+    }
+
+    .result-box.risk-moderate {
+      background-color: var(--moderate-bg);
+      border-color: var(--moderate-border);
+    }
+
+    .result-box.risk-low {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .risk-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .risk-badge {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-very-high { background-color: var(--danger-badge); }
+    .badge-high { background-color: #ea580c; }
+    .badge-moderate { background-color: var(--moderate-badge); }
+    .badge-low { background-color: var(--success-badge); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--subtext);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .rec-box {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      padding: 14px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .result-box.risk-very-high .rec-box { border-left-color: var(--danger-badge); }
+    .result-box.risk-high .rec-box { border-left-color: #ea580c; }
+    .result-box.risk-moderate .rec-box { border-left-color: var(--moderate-badge); }
+    .result-box.risk-low .rec-box { border-left-color: var(--success-badge); }
+
+    .rec-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .rec-desc {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 24px;
+    }
+
+    .btn-reset {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--subtext);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .guide {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      font-size: 14px;
+      color: var(--subtext);
+    }
+
+    .guide h3 {
+      color: var(--text);
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .guide ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .guide li {
+      margin-bottom: 6px;
+    }
+
+    .guide p {
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="badge">Tiêu hóa</span>
+    <h1>Thang điểm Forrest</h1>
+    <p class="desc">Phân loại tổn thương xuất huyết tiêu hóa trên do loét dạ dày - tá tràng qua nội soi, giúp tiên lượng tái xuất huyết, tỷ lệ tử vong và hướng dẫn xử trí.</p>
+  </div>
+
+  <div class="section-title">Chọn hình ảnh tổn thương qua nội soi</div>
+
+  <div class="options-grid" id="options-container">
+    <!-- Options generated via Javascript -->
+  </div>
+
+  <div class="actions">
+    <button class="btn-reset" onclick="resetForm()">Đặt lại (Reset)</button>
+  </div>
+
+  <div class="result-box empty" id="result-box">
+    Vui lòng chọn 1 loại tổn thương Forrest ở trên để xem kết quả phân tầng nguy cơ và gợi ý xử trí.
+  </div>
+
+  <div class="guide">
+    <h3>Hướng dẫn & Diễn giải lâm sàng</h3>
+    <p><strong>Thang điểm Forrest</strong> là hệ thống phân loại hình ảnh nội soi kinh điển giúp đánh giá mức độ hoạt động của xuất huyết tiêu hóa trên do loét dạ dày - tá tràng.</p>
+    <ul>
+      <li><strong>Xuất huyết hoạt động (Forrest Ia, Ib):</strong> Bắt buộc phải can thiệp nội soi cầm máu cấp cứu (tiêm xơ, kẹp clip, nhiệt/điện hóa) kết hợp PPI liều cao.</li>
+      <li><strong>Dấu hiệu xuất huyết vừa xảy ra (Forrest IIa, IIb, IIc):</strong>
+        <ul>
+          <li><strong>Forrest IIa:</strong> Cần can thiệp cầm máu qua nội soi.</li>
+          <li><strong>Forrest IIb:</strong> Cân nhắc bơm rửa mạnh để bóc cục máu đông; nếu lộ mạch máu bên dưới thì tiến hành can thiệp cầm máu.</li>
+          <li><strong>Forrest IIc:</strong> Không có chỉ định can thiệp nội soi cầm máu, điều trị nội khoa bằng PPI.</li>
+        </ul>
+      </li>
+      <li><strong>Không có dấu hiệu xuất huyết gần đây (Forrest III):</strong> Đáy ổ loét sạch, nguy cơ tái phát rất thấp. Có thể xem xét điều trị PPI đường uống và cho xuất viện sớm nếu tình trạng ổn định.</li>
+    </ul>
+    <p style="font-size: 12px; color: #94a3b8; margin-bottom: 0;">* Lưu ý: Khuyến cáo trên dựa trên hướng dẫn lâm sàng của ESCGE và ACG đối với xuất huyết tiêu hóa do loét dạ dày tá tràng.</p>
+  </div>
+</div>
+
+<script>
+  const forrestData = [
+    {
+      id: "ia",
+      code: "Forrest Ia",
+      title: "Máu chảy thành tia",
+      en: "Spurt bleeding",
+      riskLevel: "very-high",
+      riskText: "Nguy cơ RẤT CAO",
+      badgeClass: "badge-very-high",
+      rebleeding: "90%",
+      mortality: "11%",
+      recommendation: "Chỉ định can thiệp nội soi cầm máu cấp cứu ngay lập tức (kết hợp các phương pháp: tiêm epinephrine + clip/nhiệt). Dùng PPI liều cao đường tĩnh mạch."
+    },
+    {
+      id: "ib",
+      code: "Forrest Ib",
+      title: "Máu chảy rỉ rả",
+      en: "Oozing bleeding",
+      riskLevel: "high",
+      riskText: "Nguy cơ CAO",
+      badgeClass: "badge-high",
+      rebleeding: "60 - 80%",
+      mortality: "10%",
+      recommendation: "Chỉ định can thiệp nội soi cầm máu cấp cứu. Dùng PPI liều cao đường tĩnh mạch."
+    },
+    {
+      id: "iia",
+      code: "Forrest IIa",
+      title: "Mạch máu lộ / Không chảy máu",
+      en: "Non-bleeding visible vessel",
+      riskLevel: "high",
+      riskText: "Nguy cơ CAO",
+      badgeClass: "badge-high",
+      rebleeding: "40 - 50%",
+      mortality: "11%",
+      recommendation: "Chỉ định can thiệp nội soi cầm máu (kẹp clip hoặc nhiệt hóa học). Dùng PPI liều cao đường tĩnh mạch."
+    },
+    {
+      id: "iib",
+      code: "Forrest IIb",
+      title: "Cục máu đông dính",
+      en: "Adherent clot",
+      riskLevel: "moderate",
+      riskText: "Nguy cơ TRUNG BÌNH",
+      badgeClass: "badge-moderate",
+      rebleeding: "20 - 30%",
+      mortality: "7%",
+      recommendation: "Cân nhắc bơm rửa, bóc bóc cục máu đông cẩn thận. Nếu phát hiện mạch máu lộ bên dưới -> can thiệp cầm máu. Điều trị PPI đường tĩnh mạch liều cao."
+    },
+    {
+      id: "iic",
+      code: "Forrest IIc",
+      title: "Vết màu đen / Cặn đen đáy ổ loét",
+      en: "Flat pigmented spot",
+      riskLevel: "low",
+      riskText: "Nguy cơ THẤP",
+      badgeClass: "badge-low",
+      rebleeding: "7 - 10%",
+      mortality: "3%",
+      recommendation: "Không cần can thiệp nội soi cầm máu. Điều trị bằng thuốc PPI đường tĩnh mạch hoặc đường uống tùy tình trạng toàn thân."
+    },
+    {
+      id: "iii",
+      code: "Forrest III",
+      title: "Đáy ổ loét sạch, không có dấu xuất huyết",
+      en: "Clean ulcer base",
+      riskLevel: "low",
+      riskText: "Nguy cơ RẤT THẤP",
+      badgeClass: "badge-low",
+      rebleeding: "3 - 5%",
+      mortality: "2%",
+      recommendation: "Không can thiệp nội soi cầm máu. Điều trị nội khoa bằng PPI đường uống. Có thể xem xét cho xuất viện sớm / điều trị ngoại trú."
+    }
+  ];
+
+  let selectedId = null;
+
+  function renderOptions() {
+    const container = document.getElementById('options-container');
+    container.innerHTML = forrestData.map(item => `
+      <div class="option-card ${selectedId === item.id ? 'selected' : ''}" onclick="selectOption('${item.id}')">
+        <div class="radio-circle"></div>
+        <div class="option-content">
+          <div class="option-header">
+            <span class="forrest-tag">${item.code}</span>
+            <span style="color: var(--subtext); font-weight: 600;">- ${item.title}</span>
+          </div>
+          <div class="forrest-en">(${item.en})</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function selectOption(id) {
+    selectedId = id;
+    renderOptions();
+    updateResult();
+  }
+
+  function updateResult() {
+    const resultBox = document.getElementById('result-box');
+    if (!selectedId) {
+      resultBox.className = "result-box empty";
+      resultBox.innerHTML = "Vui lòng chọn 1 loại tổn thương Forrest ở trên để xem kết quả phân tầng nguy cơ và gợi ý xử trí.";
+      return;
+    }
+
+    const item = forrestData.find(d => d.id === selectedId);
+
+    resultBox.className = `result-box risk-${item.riskLevel}`;
+    resultBox.innerHTML = `
+      <div class="result-header">
+        <div class="risk-title">${item.code} - ${item.title}</div>
+        <span class="risk-badge ${item.badgeClass}">${item.riskText}</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">Tỷ lệ tái xuất huyết</div>
+          <div class="stat-value">${item.rebleeding}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Tỷ lệ tử vong ước tính</div>
+          <div class="stat-value">${item.mortality}</div>
+        </div>
+      </div>
+      <div class="rec-box">
+        <div class="rec-title">Gợi ý hướng xử trí lâm sàng</div>
+        <div class="rec-desc">${item.recommendation}</div>
+      </div>
+    `;
+  }
+
+  function resetForm() {
+    selectedId = null;
+    renderOptions();
+    updateResult();
+  }
+
+  // Initialize
+  renderOptions();
+</script>
+</body>
+</html>

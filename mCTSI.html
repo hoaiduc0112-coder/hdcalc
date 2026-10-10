@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chỉ số CT Sửa đổi (mCTSI) - Mức độ nặng Viêm tụy cấp</title>
+  <meta name="specialty" content="Chẩn đoán hình ảnh / Tiêu hóa">
+  <meta name="description" content="Chỉ số mCTSI (Modified CT Severity Index - Mortele): Đánh giá mức độ tổn thương, tỷ lệ hoại tử tụy và biến chứng ngoài tụy trên CT-scan sau 72 giờ trong viêm tụy cấp.">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      --low-risk: #16a34a;
+      --low-risk-bg: #dcfce7;
+      --mod-risk: #ea580c;
+      --mod-risk-bg: #ffedd5;
+      --high-risk: #dc2626;
+      --high-risk-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px; line-height: 1.5; }
+    .container { max-width: 780px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #e0f2fe; color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 25px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .calc-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 24px; }
+
+    .criterion-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .criterion-item:last-child { border-bottom: none; }
+    .criterion-header { margin-bottom: 10px; }
+    .criterion-name { font-weight: 600; font-size: 15px; color: #1e293b; }
+    .criterion-desc { font-size: 13px; color: var(--subtext); margin-top: 2px; }
+
+    .option-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .option-label { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc; cursor: pointer; transition: all 0.15s ease; font-size: 14px; }
+    .option-label:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    .option-label.selected { background: #eff6ff; border-color: var(--primary); color: #0369a1; font-weight: 600; }
+    .option-label input { display: none; }
+    .option-pts { font-weight: 700; font-size: 13px; color: var(--primary); }
+
+    .actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Result Box */
+    .result-box { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center; transition: all 0.2s ease; }
+    .score-display { font-size: 44px; font-weight: 800; line-height: 1; margin-bottom: 12px; color: var(--primary); }
+    .risk-badge { display: inline-block; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 14.5px; margin-bottom: 14px; }
+    .management-text { font-size: 14.5px; color: var(--text); line-height: 1.6; max-width: 650px; margin: 0 auto; text-align: left; background: #fafafa; border-radius: 8px; padding: 14px; border-left: 4px solid var(--primary); }
+
+    /* Information and References */
+    .info-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; font-size: 13.5px; color: var(--subtext); }
+    .info-section h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .info-section ul { padding-left: 20px; margin-bottom: 12px; }
+    .info-section li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Chẩn đoán hình ảnh / Tiêu hóa</span>
+    <h1>Chỉ số mCTSI (Modified CT Severity Index)</h1>
+    <p class="description">Đánh giá mức độ nặng trên phim chụp cắt lớp vi tính (CT bụng cản quang) theo Mortele et al. (2004) sau <strong>72 giờ</strong> kể từ khi khởi phát viêm tụy cấp.</p>
+  </div>
+
+  <div class="calc-card">
+    <!-- Tiêu chí 1: Viêm tụy -->
+    <div class="criterion-item">
+      <div class="criterion-header">
+        <div class="criterion-name">1. Tình trạng viêm tụy (Pancreatic Inflammation)</div>
+        <div class="criterion-desc">Đánh giá mức độ phù nề và tụ dịch xung quanh tuyến tụy.</div>
+      </div>
+      <div class="option-group" data-key="inflammation">
+        <label class="option-label selected">
+          <input type="radio" name="inflammation" value="0" checked>
+          <span>Tụy bình thường (Normal pancreas)</span>
+          <span class="option-pts">0 điểm</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="inflammation" value="2">
+          <span>Tụy phì đại bất thường có hoặc không có thâm nhiễm mỡ quanh tụy</span>
+          <span class="option-pts">+2 điểm</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="inflammation" value="4">
+          <span>Có &ge; 1 ổ tụ dịch quanh tụy HOẶC hoại tử mỡ quanh tụy</span>
+          <span class="option-pts">+4 điểm</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 2: Hoại tử nhu mô tụy -->
+    <div class="criterion-item">
+      <div class="criterion-header">
+        <div class="criterion-name">2. Mức độ hoại tử nhu mô tụy (Pancreatic Necrosis)</div>
+        <div class="criterion-desc">Vùng nhu mô tụy không ngấm thuốc cản quang sau tiêm trên phim CT cản quang.</div>
+      </div>
+      <div class="option-group" data-key="necrosis">
+        <label class="option-label selected">
+          <input type="radio" name="necrosis" value="0" checked>
+          <span>Không có hoại tử nhu mô (Ngấm thuốc bình thường)</span>
+          <span class="option-pts">0 điểm</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="necrosis" value="2">
+          <span>Hoại tử &le; 30% nhu mô tụy</span>
+          <span class="option-pts">+2 điểm</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="necrosis" value="4">
+          <span>Hoại tử &gt; 30% nhu mô tụy</span>
+          <span class="option-pts">+4 điểm</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 3: Biến chứng ngoài tụy -->
+    <div class="criterion-item">
+      <div class="criterion-header">
+        <div class="criterion-name">3. Biến chứng ngoài tụy (Extrapancreatic Complications)</div>
+        <div class="criterion-desc">Tràn dịch màng phổi, dịch cổ trướng, biến chứng mạch máu (huyết khối tĩnh mạch lách/cửa, phình mạch giả), hoặc tổn thương đường tiêu hóa liên quan.</div>
+      </div>
+      <div class="option-group" data-key="extrapancreatic">
+        <label class="option-label selected">
+          <input type="radio" name="extrapancreatic" value="0" checked>
+          <span>Không có biến chứng ngoài tụy</span>
+          <span class="option-pts">0 điểm</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="extrapancreatic" value="2">
+          <span>Có ít nhất 1 biến chứng ngoài tụy</span>
+          <span class="option-pts">+2 điểm</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-reset" id="reset-btn">Đặt lại tất cả</button>
+    </div>
+  </div>
+
+  <!-- Kết quả -->
+  <div class="result-box" id="result-box">
+    <div class="score-display" id="total-score">0 <span style="font-size: 20px; font-weight: normal; color: var(--subtext);">/ 10 điểm</span></div>
+    <div class="risk-badge" id="risk-badge">Thể nhẹ (Mild Acute Pancreatitis)</div>
+    <div class="management-text" id="management-text">
+      <strong>Đánh giá lâm sàng:</strong> Viêm tụy cấp mức độ nhẹ trên hình ảnh CT. Nguy cơ suy tạng và tỷ lệ tử vong rất thấp (&lt; 1%). Điều trị nội khoa thông thường và theo dõi hồi phục.
+    </div>
+  </div>
+
+  <!-- Thông tin hướng dẫn chi tiết -->
+  <div class="info-section">
+    <h3>Phân tầng mức độ nặng theo mCTSI:</h3>
+    <ul>
+      <li><strong>0 - 2 điểm (Thể nhẹ - Mild):</strong> Tỷ lệ tử vong ~ 0%, tỷ lệ suy tạng ~ 0%. Thời gian nằm viện ngắn.</li>
+      <li><strong>4 - 6 điểm (Thể trung bình - Moderate):</strong> Tỷ lệ tử vong thấp (~ 2%), nguy cơ suy tạng thoáng qua hoặc kéo dài tăng lên (~ 10 - 15%).</li>
+      <li><strong>8 - 10 điểm (Thể nặng - Severe):</strong> Tỷ lệ tử vong cao (~ 12 - 17%), nguy cơ suy tạng cao (~ 50%), cần can thiệp ngoại khoa/dẫn lưu hoặc chăm sóc tích cực tại ICU.</li>
+    </ul>
+    <h3>Thời điểm chụp CT thích hợp:</h3>
+    <ul>
+      <li>Chỉ định chụp CT-scan có cản quang tốt nhất là sau <strong>72 giờ kể từ khi khởi phát đau bụng</strong> để phản ánh chính xác ranh giới và thể tích hoại tử mô tụy. Chụp quá sớm (&lt; 48 - 72 giờ) thường đánh giá thấp mức độ hoại tử.</li>
+      <li><strong>Cải tiến của mCTSI so với CTSI cổ điển (Balthazar):</strong> Đơn giản hóa phân loại hoại tử (tách thành &le; 30% và &gt; 30%), bổ sung tiêu chí biến chứng ngoài tụy (tràn dịch màng phổi, cổ trướng, huyết khối mạch máu) giúp tương quan chặt chẽ hơn với tỷ lệ suy tạng và tử vong.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const state = {
+    inflammation: 0,
+    necrosis: 0,
+    extrapancreatic: 0
+  };
+
+  const totalScoreEl = document.getElementById('total-score');
+  const riskBadgeEl = document.getElementById('risk-badge');
+  const managementTextEl = document.getElementById('management-text');
+  const resultBoxEl = document.getElementById('result-box');
+
+  function calculate() {
+    const score = state.inflammation + state.necrosis + state.extrapancreatic;
+    totalScoreEl.innerHTML = `${score} <span style="font-size: 20px; font-weight: normal; color: var(--subtext);">/ 10 điểm</span>`;
+
+    if (score <= 2) {
+      riskBadgeEl.textContent = 'Thể nhẹ (Mild: 0 - 2 điểm)';
+      riskBadgeEl.style.backgroundColor = 'var(--low-risk-bg)';
+      riskBadgeEl.style.color = 'var(--low-risk)';
+      resultBoxEl.style.borderColor = '#86efac';
+      managementTextEl.innerHTML = '<strong>Đánh giá lâm sàng:</strong> Viêm tụy cấp mức độ nhẹ trên hình ảnh CT. Nguy cơ suy tạng và tỷ lệ tử vong rất thấp (&lt; 1%). Bệnh nhân thường đáp ứng tốt với hồi sức dịch, giảm đau và cho ăn sớm trở lại.';
+    } else if (score <= 6) {
+      riskBadgeEl.textContent = 'Thể trung bình (Moderate: 4 - 6 điểm)';
+      riskBadgeEl.style.backgroundColor = 'var(--mod-risk-bg)';
+      riskBadgeEl.style.color = 'var(--mod-risk)';
+      resultBoxEl.style.borderColor = '#fdba74';
+      managementTextEl.innerHTML = '<strong>Đánh giá lâm sàng:</strong> Viêm tụy cấp mức độ trung bình. Nguy cơ xuất hiện biến chứng tại chỗ (tụ dịch, hoại tử khu trú) và suy tạng thoáng qua. Khuyến cáo theo dõi sát chức năng thận, bilan dịch và dấu hiệu nhiễm trùng tại khoa chuyên khoa Tiêu hóa hoặc phòng chăm sóc đặc biệt.';
+    } else {
+      riskBadgeEl.textContent = 'Thể nặng (Severe: 8 - 10 điểm)';
+      riskBadgeEl.style.backgroundColor = 'var(--high-risk-bg)';
+      riskBadgeEl.style.color = 'var(--high-risk)';
+      resultBoxEl.style.borderColor = '#fca5a5';
+      managementTextEl.innerHTML = '<strong>Đánh giá lâm sàng:</strong> <strong>Viêm tụy cấp mức độ nặng trên hình ảnh CT.</strong> Nguy cơ suy tạng kéo dài (~ 50%) và tử vong cao (~ 12 - 17%). Cân nhắc điều trị tại ICU, đánh giá nguy cơ hoại tử tụy nhiễm trùng, hội chẩn đa chuyên khoa để can thiệp theo phương pháp từng bước (Step-up approach) nếu có chỉ định.';
+    }
+  }
+
+  // Bắt sự kiện chọn option
+  document.querySelectorAll('.option-group').forEach(group => {
+    const key = group.dataset.key;
+    const labels = group.querySelectorAll('.option-label');
+
+    labels.forEach(label => {
+      label.addEventListener('click', () => {
+        labels.forEach(l => l.classList.remove('selected'));
+        label.classList.add('selected');
+        const input = label.querySelector('input');
+        input.checked = true;
+        state[key] = parseInt(input.value, 10);
+        calculate();
+      });
+    });
+  });
+
+  // Nút đặt lại
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    state.inflammation = 0;
+    state.necrosis = 0;
+    state.extrapancreatic = 0;
+
+    document.querySelectorAll('.option-group').forEach(group => {
+      const labels = group.querySelectorAll('.option-label');
+      labels.forEach(l => l.classList.remove('selected'));
+      const firstLabel = labels[0];
+      firstLabel.classList.add('selected');
+      firstLabel.querySelector('input').checked = true;
+    });
+
+    calculate();
+  });
+
+  calculate();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+Hãy tạo cho tôi 1 file HTML độc lập hoàn chỉnh để đánh giá thang điểm lâm sàng: [TÊN THANG ĐIỂM Ở ĐÂY, VÍ DỤ: CHA2DS2-VASc / Glasgow / Child-Pugh] thuộc chuyên khoa [TÊN CHUYÊN KHOA, VÍ DỤ: Tim mạch / Hồi sức cấp cứu / Tiêu hóa].
+
+YÊU CẦU KỸ THUẬT BẮT BUỘC:
+1. Thẻ Meta & Title (Để trang chủ tự động quét dữ liệu):
+   - <title>: Tên thang điểm và mục đích chính bằng tiếng Việt.
+   - <meta name="specialty" content="[Tên chuyên khoa]">
+   - <meta name="description" content="[Mô tả tóm tắt ứng dụng lâm sàng trong 1-2 câu]">
+
+2. Cấu trúc và Giao diện:
+   - Là một file duy nhất (.html), chứa toàn bộ mã HTML, CSS và JavaScript bên trong (không dùng thư viện ngoài hay CDN).
+   - Giao diện hiện đại, tối giản theo phong cách MDCalc (Font hệ thống không chân, màu sắc trang nhã, responsive mượt mà trên mobile và desktop).
+   - Các lựa chọn/tiêu chí thiết kế dạng nút bấm (Button group) hoặc Card chọn (Checkbox/Radio) to rõ, dễ bấm chọn.
+
+3. Logic tính toán và Hiển thị kết quả:
+   - Tính điểm theo thời gian thực (Real-time): Tổng điểm và phân tầng nguy cơ tự động cập nhật ngay khi bấm chọn mà không cần bấm nút "Tính điểm".
+   - Khung kết quả nổi bật (có đổi màu trạng thái theo mức độ nặng: Xanh/Vàng/Đỏ).
+   - Phân tầng nguy cơ chi tiết và gợi ý hướng xử trí lâm sàng tương ứng với số điểm.
+   - Có nút "Đặt lại" (Reset) để xóa trắng toàn bộ lựa chọn.
+   - Có phần "Hướng dẫn & Diễn giải lâm sàng" (Guideline reference) tóm tắt cơ sở y khoa và các lưu ý loại trừ ở cuối trang.
+
+Chỉ xuất ra mã nguồn hoàn chỉnh của file HTML để tôi tải về hoặc lưu file trực tiếp.

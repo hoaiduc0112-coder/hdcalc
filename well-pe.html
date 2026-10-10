@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Wells Thuyên Tắc Phổi (Wells' PE Criteria)</title>
+  <meta name="specialty" content="Hô hấp / Cấp cứu">
+  <meta name="description" content="Đánh giá xác suất lâm sàng thuyên tắc động mạch phổi (PE) để định hướng chỉ định xét nghiệm D-dimer hoặc chụp cắt lớp vi tính mạch máu phổi (CTPA).">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      --low-risk: #16a34a;
+      --low-risk-bg: #dcfce7;
+      --mod-risk: #ea580c;
+      --mod-risk-bg: #ffedd5;
+      --high-risk: #dc2626;
+      --high-risk-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px; line-height: 1.5; }
+    .container { max-width: 780px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #e0f2fe; color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .calc-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 24px; }
+
+    .criterion-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 16px; }
+    .criterion-item:last-child { border-bottom: none; }
+    .criterion-info { flex: 1; }
+    .criterion-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; color: #1e293b; }
+    .criterion-desc { font-size: 13px; color: var(--subtext); }
+
+    .btn-group { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-option { border: 1px solid var(--border); background: #f1f5f9; color: var(--subtext); padding: 8px 16px; border-radius: 6px; font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; outline: none; }
+    .btn-option:hover { background: #e2e8f0; }
+    .btn-option.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+    .actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Result Box */
+    .result-box { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center; transition: all 0.2s ease; }
+    .score-display { font-size: 44px; font-weight: 800; line-height: 1; margin-bottom: 12px; color: var(--primary); }
+    .risk-badge { display: inline-block; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 14.5px; margin-bottom: 14px; }
+    
+    .tiers-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; text-align: left; }
+    @media (max-width: 600px) { .tiers-summary { grid-template-columns: 1fr; } }
+    .tier-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; }
+    .tier-card-title { font-weight: 700; color: #334155; margin-bottom: 4px; }
+    
+    .management-text { font-size: 14.5px; color: var(--text); line-height: 1.6; max-width: 650px; margin: 0 auto; text-align: left; background: #fafafa; border-radius: 8px; padding: 14px; border-left: 4px solid var(--primary); }
+
+    /* Clinical Guidelines */
+    .info-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; font-size: 13.5px; color: var(--subtext); }
+    .info-section h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .info-section ul { padding-left: 20px; margin-bottom: 12px; }
+    .info-section li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Hô hấp / Cấp cứu / Tim mạch</span>
+    <h1>Thang điểm Wells Thuyên Tắc Phổi</h1>
+    <p class="description">Đánh giá xác suất tiền nghiệm (pre-test probability) thuyên tắc động mạch phổi (PE) ở bệnh nhân nghi ngờ thuyên tắc phổi cấp để chỉ định xét nghiệm D-dimer hoặc chụp CTPA phù hợp.</p>
+  </div>
+
+  <div class="calc-card">
+    <!-- Tiêu chí 1: DVT -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">1. Triệu chứng lâm sàng của huyết khối tĩnh mạch sâu (DVT)</div>
+        <div class="criterion-desc">Sưng phù chân không đối xứng, đau khi ấn dọc đường đi của hệ tĩnh mạch sâu.</div>
+      </div>
+      <div class="btn-group" data-key="dvt">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="3">Có (+3)</button>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 2: Alternative diagnosis -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">2. Thuyên tắc phổi là chẩn đoán có khả năng nhất (hoặc tương đương)</div>
+        <div class="criterion-desc">Không có chẩn đoán phân biệt nào khác hợp lý hơn để giải thích các triệu chứng hiện tại của người bệnh.</div>
+      </div>
+      <div class="btn-group" data-key="pe_likely">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="3">Có (+3)</button>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 3: HR > 100 -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">3. Nhịp tim &gt; 100 lần/phút (Tachycardia)</div>
+        <div class="criterion-desc">Tần số tim đo được lúc nghỉ ngơi trên 100 nhịp/phút.</div>
+      </div>
+      <div class="btn-group" data-key="hr">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1.5">Có (+1.5)</button>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 4: Bất động hoặc phẫu thuật -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">4. Bất động &ge; 3 ngày liên tiếp HOẶC phẫu thuật trong 4 tuần qua</div>
+        <div class="criterion-desc">Nằm bất động trên giường &ge; 3 ngày gần đây hoặc có can thiệp phẫu thuật (đặc biệt phẫu thuật lớn/vùng bụng/chấn thương chỉnh hình) trong vòng 4 tuần.</div>
+      </div>
+      <div class="btn-group" data-key="immo">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1.5">Có (+1.5)</button>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 5: Tiền sử DVT/PE -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">5. Tiền sử mắc DVT hoặc Thuyên tắc phổi trước đây</div>
+        <div class="criterion-desc">Từng được chẩn đoán xác định huyết khối tĩnh mạch sâu hoặc thuyên tắc động mạch phổi trong tiền sử.</div>
+      </div>
+      <div class="btn-group" data-key="prev_vte">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1.5">Có (+1.5)</button>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 6: Ho ra máu -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">6. Ho ra máu (Hemoptysis)</div>
+        <div class="criterion-desc">Xuất hiện ít nhất một đợt ho khạc đờm lẫn máu tươi hoặc máu đen.</div>
+      </div>
+      <div class="btn-group" data-key="hemo">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <!-- Tiêu chí 7: Ung thư -->
+    <div class="criterion-item">
+      <div class="criterion-info">
+        <div class="criterion-name">7. Bệnh ác tính (Malignancy)</div>
+        <div class="criterion-desc">Ung thư đang tiến triển, đang điều trị (hóa/xạ trị), điều trị trong vòng 6 tháng qua hoặc đang chăm sóc giảm nhẹ.</div>
+      </div>
+      <div class="btn-group" data-key="cancer">
+        <button type="button" class="btn-option active" data-val="0">Không (0)</button>
+        <button type="button" class="btn-option" data-val="1">Có (+1)</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-reset" id="reset-btn">Đặt lại tất cả</button>
+    </div>
+  </div>
+
+  <!-- Kết quả -->
+  <div class="result-box" id="result-box">
+    <div class="score-display" id="total-score">0 <span style="font-size: 20px; font-weight: normal; color: var(--subtext);">/ 12.5 điểm</span></div>
+    <div class="risk-badge" id="risk-badge">Ít nghĩ đến PE (Nguy cơ thấp)</div>
+    
+    <div class="tiers-summary">
+      <div class="tier-card">
+        <div class="tier-card-title">Phân tầng 2 mức (Khuyến cáo lâm sàng)</div>
+        <div id="tier2-desc"><strong>&le; 4 điểm:</strong> Ít nghĩ đến PE (Xác suất ~12.1%)</div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-card-title">Phân tầng 3 mức (Truyền thống)</div>
+        <div id="tier3-desc"><strong>&lt; 2 điểm:</strong> Nguy cơ thấp (Xác suất ~1.3 - 3.4%)</div>
+      </div>
+    </div>
+
+    <div class="management-text" id="management-text">
+      <strong>Gợi ý xử trí:</strong> Bệnh nhân thuộc nhóm <strong>ít nghĩ đến PE</strong>. Làm xét nghiệm <em>D-dimer độ nhạy cao</em>. Nếu D-dimer âm tính (hoặc dưới ngưỡng hiệu chỉnh theo tuổi), có thể loại trừ an toàn thuyên tắc phổi mà không cần chụp CTPA.
+    </div>
+  </div>
+
+  <!-- Hướng dẫn chi tiết -->
+  <div class="info-section">
+    <h3>Chiến lược chẩn đoán theo Hội Tim Mạch Châu Âu (ESC Guidelines):</h3>
+    <ul>
+      <li><strong>Mô hình 2 mức (Two-tier Model - Được ưu tiên sử dụng):</strong>
+        <ul>
+          <li><strong>&le; 4.0 điểm (PE Unlikely - Ít nghĩ đến):</strong> Chỉ định xét nghiệm D-dimer độ nhạy cao. Nếu D-dimer bình thường &rarr; Loại trừ PE; nếu D-dimer tăng &rarr; Chụp CTPA.</li>
+          <li><strong>&gt; 4.0 điểm (PE Likely - Nghĩ nhiều đến):</strong> Chụp cắt lớp vi tính mạch máu phổi (CTPA) ngay. Không khuyến cáo dùng D-dimer để loại trừ.</li>
+        </ul>
+      </li>
+      <li><strong>Ngưỡng D-dimer hiệu chỉnh theo tuổi (Age-adjusted D-dimer):</strong>
+        <ul>
+          <li>Bệnh nhân &le; 50 tuổi: Ngưỡng 500 &micro;g/L (FEU).</li>
+          <li>Bệnh nhân &gt; 50 tuổi: Ngưỡng tính = <em>Tuổi &times; 10 &micro;g/L</em> (Ví dụ: 72 tuổi &rarr; ngưỡng âm tính là &lt; 720 &micro;g/L).</li>
+        </ul>
+      </li>
+      <li><strong>Quy tắc loại trừ PERC (Pulmonary Embolism Rule-out Criteria):</strong> Nếu điểm Wells = 0 VÀ thỏa mãn toàn bộ 8 tiêu chí PERC, có thể loại trừ PE trực tiếp mà không cần làm xét nghiệm D-dimer.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const state = {
+    dvt: 0,
+    pe_likely: 0,
+    hr: 0,
+    immo: 0,
+    prev_vte: 0,
+    hemo: 0,
+    cancer: 0
+  };
+
+  const totalScoreEl = document.getElementById('total-score');
+  const riskBadgeEl = document.getElementById('risk-badge');
+  const tier2DescEl = document.getElementById('tier2-desc');
+  const tier3DescEl = document.getElementById('tier3-desc');
+  const managementTextEl = document.getElementById('management-text');
+  const resultBoxEl = document.getElementById('result-box');
+
+  function calculate() {
+    const score = Object.values(state).reduce((acc, val) => acc + val, 0);
+    totalScoreEl.innerHTML = `${score} <span style="font-size: 20px; font-weight: normal; color: var(--subtext);">/ 12.5 điểm</span>`;
+
+    // Phân tầng 2 mức (Two-tier)
+    const isUnlikely = score <= 4;
+    tier2DescEl.innerHTML = isUnlikely 
+      ? '<strong>&le; 4 điểm:</strong> Ít nghĩ đến PE (Xác suất ~12.1%)' 
+      : '<strong>&gt; 4 điểm:</strong> Nghĩ nhiều đến PE (Xác suất ~37.1%)';
+
+    // Phân tầng 3 mức (Three-tier)
+    if (score < 2) {
+      tier3DescEl.innerHTML = '<strong>&lt; 2 điểm:</strong> Nguy cơ thấp (Xác suất ~1.3 - 3.4%)';
+    } else if (score <= 6) {
+      tier3DescEl.innerHTML = '<strong>2 - 6 điểm:</strong> Nguy cơ trung bình (Xác suất ~16.2%)';
+    } else {
+      tier3DescEl.innerHTML = '<strong>&gt; 6 điểm:</strong> Nguy cơ cao (Xác suất ~37.5 - 40.6%)';
+    }
+
+    // Hiển thị khuyến nghị và đổi màu sắc
+    if (isUnlikely) {
+      riskBadgeEl.textContent = 'Ít nghĩ đến PE (PE Unlikely)';
+      riskBadgeEl.style.backgroundColor = 'var(--low-risk-bg)';
+      riskBadgeEl.style.color = 'var(--low-risk)';
+      resultBoxEl.style.borderColor = '#86efac';
+      managementTextEl.innerHTML = '<strong>Gợi ý xử trí:</strong> Điểm &le; 4 (Ít nghĩ đến PE). Tiến hành làm xét nghiệm <strong>D-dimer độ nhạy cao</strong>. Nếu D-dimer âm tính (hoặc &lt; ngưỡng theo tuổi đối với người &gt; 50 tuổi), có thể <strong>loại trừ an toàn</strong> thuyên tắc phổi mà không cần chụp CTPA. Nếu D-dimer dương tính &rarr; Chụp CTPA.';
+    } else {
+      riskBadgeEl.textContent = 'Nghĩ nhiều đến PE (PE Likely)';
+      riskBadgeEl.style.backgroundColor = 'var(--high-risk-bg)';
+      riskBadgeEl.style.color = 'var(--high-risk)';
+      resultBoxEl.style.borderColor = '#fca5a5';
+      managementTextEl.innerHTML = '<strong>Gợi ý xử trí:</strong> Điểm &gt; 4 (Nghĩ nhiều đến PE). Chỉ định <strong>chụp cắt lớp vi tính mạch máu phổi (CTPA) ngay</strong>. Không khuyến cáo dùng xét nghiệm D-dimer đơn thuần để loại trừ bệnh ở nhóm nguy cơ này. Xem xét khởi trị chống đông sớm nếu không có chống chỉ định trong khi chờ kết quả chẩn đoán hình ảnh.';
+    }
+  }
+
+  // Bắt sự kiện chọn nút
+  document.querySelectorAll('.btn-group').forEach(group => {
+    const key = group.dataset.key;
+    const buttons = group.querySelectorAll('.btn-option');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[key] = parseFloat(btn.dataset.val);
+        calculate();
+      });
+    });
+  });
+
+  // Nút đặt lại
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    Object.keys(state).forEach(k => state[k] = 0);
+    document.querySelectorAll('.btn-group').forEach(group => {
+      const buttons = group.querySelectorAll('.btn-option');
+      buttons.forEach(b => {
+        if (b.dataset.val === '0') b.classList.add('active');
+        else b.classList.remove('active');
+      });
+    });
+    calculate();
+  });
+
+  calculate();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phân loại Viêm tụy cấp Atlanta Sửa đổi (2012) & Thang điểm Marshall</title>
+  <meta name="specialty" content="Tiêu hóa / Hồi sức cấp cứu">
+  <meta name="description" content="Phân loại mức độ nặng viêm tụy cấp theo Atlanta 2012 (Nhẹ, Trung bình nặng, Nặng) kết hợp thang điểm Marshall sửa đổi đánh giá suy tạng kéo dài.">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      --mild: #16a34a;
+      --mild-bg: #dcfce7;
+      --mod: #ea580c;
+      --mod-bg: #ffedd5;
+      --severe: #dc2626;
+      --severe-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px; line-height: 1.5; }
+    .container { max-width: 820px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #e0f2fe; color: var(--primary); font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 25px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .section-title { font-size: 17px; font-weight: 700; color: #1e293b; margin: 24px 0 12px; display: flex; align-items: center; justify-content: space-between; }
+    .section-title span { font-size: 13px; font-weight: normal; color: var(--subtext); }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; }
+
+    /* Marshall Table */
+    .marshall-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .organ-box { border: 1px solid var(--border); border-radius: 8px; padding: 14px; background: #fafafa; }
+    .organ-title { font-weight: 600; font-size: 15px; margin-bottom: 10px; color: #1e293b; display: flex; justify-content: space-between; }
+    .organ-title .organ-score { color: var(--primary); font-weight: 700; }
+    
+    .select-input { width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border); background: #ffffff; font-size: 14px; color: var(--text); outline: none; }
+    .select-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15); }
+
+    /* Checkbox & Options */
+    .checkbox-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; cursor: pointer; transition: background 0.15s; }
+    .checkbox-item:hover { background: #f8fafc; }
+    .checkbox-item.checked { background: #eff6ff; border-color: #93c5fd; }
+    .checkbox-item input { margin-top: 3px; width: 17px; height: 17px; accent-color: var(--primary); flex-shrink: 0; }
+    .checkbox-text { flex-grow: 1; }
+    .checkbox-title { font-weight: 600; font-size: 14.5px; color: #1e293b; }
+    .checkbox-desc { font-size: 13px; color: var(--subtext); margin-top: 2px; }
+
+    .actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Result */
+    .result-box { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center; transition: all 0.2s ease; }
+    .classification-title { font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+    .status-badge { display: inline-block; padding: 6px 16px; border-radius: 9999px; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+    .details-list { display: flex; justify-content: center; gap: 20px; font-size: 13.5px; margin-bottom: 14px; color: var(--subtext); flex-wrap: wrap; }
+    .details-list strong { color: var(--text); }
+    .management-text { font-size: 14.5px; color: var(--text); line-height: 1.6; max-width: 680px; margin: 0 auto; text-align: left; background: #fafafa; border-radius: 8px; padding: 14px; border-left: 4px solid var(--primary); }
+
+    /* Info */
+    .info-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; font-size: 13.5px; color: var(--subtext); }
+    .info-section h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .info-section ul { padding-left: 20px; margin-bottom: 12px; }
+    .info-section li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Tiêu hóa / Hồi sức cấp cứu</span>
+    <h1>Phân loại Viêm tụy cấp Atlanta Sửa đổi (2012)</h1>
+    <p class="description">Đánh giá phân tầng mức độ nặng (Nhẹ - Nặng vừa - Nặng) dựa trên sự hiện diện của suy tạng (theo thang điểm Marshall sửa đổi) và các biến chứng tại chỗ / toàn thân.</p>
+  </div>
+
+  <!-- PHẦN 1: THANG ĐIỂM MARSHALL SỬA ĐỔI ĐÁNH GIÁ SUY TẠNG -->
+  <div class="section-title">
+    I. ĐÁNH GIÁ SUY TẠNG (Modified Marshall Scoring System)
+    <span>Suy tạng khi điểm &ge; 2 tại bất kỳ cơ quan nào</span>
+  </div>
+
+  <div class="card">
+    <div class="marshall-grid">
+      <!-- Hô hấp -->
+      <div class="organ-box">
+        <div class="organ-title">
+          <span>1. Hệ Hô hấp: Tỷ lệ PaO2 / FiO2</span>
+          <span class="organ-score" id="score-resp">0 điểm</span>
+        </div>
+        <select class="select-input" id="organ-resp">
+          <option value="0" selected>PaO2 / FiO2 &gt; 400 (Bình thường - 0 điểm)</option>
+          <option value="1">PaO2 / FiO2: 301 - 400 (1 điểm)</option>
+          <option value="2">PaO2 / FiO2: 201 - 300 (Suy hô hấp - 2 điểm)</option>
+          <option value="3">PaO2 / FiO2: 101 - 200 (3 điểm)</option>
+          <option value="4">PaO2 / FiO2 &le; 101 (Suy hô hấp nặng - 4 điểm)</option>
+        </select>
+      </div>
+
+      <!-- Thận -->
+      <div class="organ-box">
+        <div class="organ-title">
+          <span>2. Hệ Thận: Creatinine huyết thanh</span>
+          <span class="organ-score" id="score-renal">0 điểm</span>
+        </div>
+        <select class="select-input" id="organ-renal">
+          <option value="0" selected>Creatinine &le; 134 &micro;mol/L (&le; 1.4 mg/dL) (0 điểm)</option>
+          <option value="1">Creatinine: 134 - 169 &micro;mol/L (1.4 - 1.8 mg/dL) (1 điểm)</option>
+          <option value="2">Creatinine: 170 - 310 &micro;mol/L (1.9 - 3.5 mg/dL) (Suy thận - 2 điểm)</option>
+          <option value="3">Creatinine: 311 - 439 &micro;mol/L (3.6 - 4.9 mg/dL) (3 điểm)</option>
+          <option value="4">Creatinine &gt; 439 &micro;mol/L (&gt; 4.9 mg/dL) (Suy thận nặng - 4 điểm)</option>
+        </select>
+      </div>
+
+      <!-- Tim mạch -->
+      <div class="organ-box">
+        <div class="organ-title">
+          <span>3. Hệ Tim mạch: Huyết áp tâm thu (HATT) & Đáp ứng bù dịch</span>
+          <span class="organ-score" id="score-cardio">0 điểm</span>
+        </div>
+        <select class="select-input" id="organ-cardio">
+          <option value="0" selected>HATT &gt; 90 mmHg (Bình thường - 0 điểm)</option>
+          <option value="1">HATT &lt; 90 mmHg, đáp ứng tốt với bù dịch (1 điểm)</option>
+          <option value="2">HATT &lt; 90 mmHg, không đáp ứng với bù dịch (Sốc tim mạch - 2 điểm)</option>
+          <option value="3">HATT &lt; 90 mmHg kèm pH &lt; 7.35 (3 điểm)</option>
+          <option value="4">HATT &lt; 90 mmHg kèm pH &lt; 7.20 (Sốc tim mạch nặng - 4 điểm)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHẦN 2: THỜI GIAN SUY TẠNG & BIẾN CHỨNG -->
+  <div class="section-title">
+    II. THỜI GIAN SUY TẠNG & CÁC BIẾN CHỨNG KÈM THEO
+  </div>
+
+  <div class="card">
+    <!-- Thời gian suy tạng -->
+    <label class="checkbox-item" id="item-organ-persistent">
+      <input type="checkbox" id="chk-persistent">
+      <div class="checkbox-text">
+        <div class="checkbox-title">Suy tạng kéo dài &ge; 48 giờ (Persistent Organ Failure)</div>
+        <div class="checkbox-desc">Suy ít nhất một trong 3 hệ cơ quan trên tồn tại liên tục trên 48 giờ sau khi hồi sức.</div>
+      </div>
+    </label>
+
+    <!-- Biến chứng tại chỗ -->
+    <label class="checkbox-item" id="item-local-comp">
+      <input type="checkbox" id="chk-local">
+      <div class="checkbox-text">
+        <div class="checkbox-title">Biến chứng tại chỗ ở tụy (Local Complications)</div>
+        <div class="checkbox-desc">Tụ dịch quanh tụy cấp (APFC), nang giả tụy (pseudocyst), tụ dịch hoại tử cấp (ANC), hoặc hoại tử tạo vỏ (WON).</div>
+      </div>
+    </label>
+
+    <!-- Biến chứng toàn thân -->
+    <label class="checkbox-item" id="item-systemic-comp">
+      <input type="checkbox" id="chk-systemic">
+      <div class="checkbox-text">
+        <div class="checkbox-title">Đợt bùng phát bệnh lý nền nặng (Systemic Complications)</div>
+        <div class="checkbox-desc">Bùng phát các bệnh mạn tính phối hợp do viêm tụy gây ra (COPD đợt cấp, suy tim ứ huyết nặng lên...).</div>
+      </div>
+    </label>
+
+    <div class="actions">
+      <button type="button" class="btn-reset" id="btn-reset">Đặt lại tất cả</button>
+    </div>
+  </div>
+
+  <!-- BẢNG KẾT QUẢ -->
+  <div class="result-box" id="result-box">
+    <div class="classification-title" id="class-title">VIÊM TỤY CẤP THỂ NHẸ (Mild)</div>
+    <div class="status-badge" id="status-badge">Tỷ lệ tử vong rất thấp (&lt; 1%)</div>
+    <div class="details-list">
+      <div>Suy tạng Marshall: <strong id="lbl-organ-status">Không có</strong></div>
+      <div>Biến chứng tại chỗ / toàn thân: <strong id="lbl-comp-status">Không</strong></div>
+    </div>
+    <div class="management-text" id="management-text">
+      Bệnh nhân không có suy tạng và không có biến chứng tại chỗ/toàn thân. Tiên lượng hồi phục nhanh trong tuần đầu, điều trị nội khoa thông thường, bù dịch kiểm soát và cho ăn lại sớm bằng đường miệng khi bớt đau.
+    </div>
+  </div>
+
+  <!-- DIỄN GIẢI LÂM SÀNG -->
+  <div class="info-section">
+    <h3>Định nghĩa mức độ nặng theo Atlanta Sửa đổi 2012:</h3>
+    <ul>
+      <li><strong>Viêm tụy cấp nhẹ (Mild acute pancreatitis):</strong> Không có suy tạng và không có biến chứng tại chỗ hoặc toàn thân. Bệnh nhân thường xuất viện trong vài ngày.</li>
+      <li><strong>Viêm tụy cấp nặng vừa (Moderately severe acute pancreatitis):</strong> 
+        Có suy tạng thoáng qua (tự hồi phục trong vòng &lt; 48 giờ) <strong>HOẶC</strong> có biến chứng tại chỗ / toàn thân nhưng không kèm suy tạng kéo dài.
+      </li>
+      <li><strong>Viêm tụy cấp nặng (Severe acute pancreatitis):</strong> 
+        Có <strong>suy tạng kéo dài (&ge; 48 giờ)</strong> của một hoặc nhiều cơ quan (Điểm Marshall &ge; 2). Tỷ lệ tử vong cao (30% - 50%), đặc biệt khi có kèm hoại tử tụy nhiễm trùng.
+      </li>
+    </ul>
+    <h3>Quy tắc tính suy tạng theo thang điểm Marshall sửa đổi:</h3>
+    <p>Điểm Marshall &ge; 2 tại bất kỳ một trong ba cơ quan (Hô hấp, Thận, Tim mạch) được định nghĩa là <strong>Suy tạng</strong>. Cần liên tục theo dõi và tính lại điểm sau 24 và 48 giờ để xác định thể suy tạng thoáng qua hay suy tạng kéo dài.</p>
+  </div>
+</div>
+
+<script>
+  const organResp = document.getElementById('organ-resp');
+  const organRenal = document.getElementById('organ-renal');
+  const organCardio = document.getElementById('organ-cardio');
+
+  const scoreResp = document.getElementById('score-resp');
+  const scoreRenal = document.getElementById('score-renal');
+  const scoreCardio = document.getElementById('score-cardio');
+
+  const chkPersistent = document.getElementById('chk-persistent');
+  const chkLocal = document.getElementById('chk-local');
+  const chkSystemic = document.getElementById('chk-systemic');
+
+  const classTitle = document.getElementById('class-title');
+  const statusBadge = document.getElementById('status-badge');
+  const lblOrganStatus = document.getElementById('lbl-organ-status');
+  const lblCompStatus = document.getElementById('lbl-comp-status');
+  const managementText = document.getElementById('management-text');
+  const resultBox = document.getElementById('result-box');
+
+  function calculate() {
+    const sResp = parseInt(organResp.value, 10);
+    const sRenal = parseInt(organRenal.value, 10);
+    const sCardio = parseInt(organCardio.value, 10);
+
+    scoreResp.textContent = sResp + ' điểm';
+    scoreRenal.textContent = sRenal + ' điểm';
+    scoreCardio.textContent = sCardio + ' điểm';
+
+    const hasOrganFailure = (sResp >= 2 || sRenal >= 2 || sCardio >= 2);
+    const isPersistent = chkPersistent.checked;
+    const hasLocalComp = chkLocal.checked;
+    const hasSystemicComp = chkSystemic.checked;
+    const hasComplications = hasLocalComp || hasSystemicComp;
+
+    // Cập nhật text tóm tắt
+    if (hasOrganFailure) {
+      lblOrganStatus.textContent = isPersistent ? 'Suy tạng kéo dài (≥ 48h)' : 'Suy tạng thoáng qua (< 48h)';
+      lblOrganStatus.style.color = isPersistent ? 'var(--severe)' : 'var(--mod)';
+    } else {
+      lblOrganStatus.textContent = 'Không có (Điểm Marshall < 2)';
+      lblOrganStatus.style.color = 'var(--mild)';
+    }
+
+    lblCompStatus.textContent = hasComplications ? 'Có biến chứng' : 'Không có';
+    lblCompStatus.style.color = hasComplications ? 'var(--mod)' : 'var(--mild)';
+
+    // Đánh giá phân độ Atlanta 2012
+    if (hasOrganFailure && isPersistent) {
+      // NẶNG (Severe)
+      classTitle.textContent = 'VIÊM TỤY CẤP THỂ NẶNG (Severe)';
+      classTitle.style.color = 'var(--severe)';
+      statusBadge.textContent = 'Nguy cơ tử vong rất cao (30% - 50%)';
+      statusBadge.style.backgroundColor = 'var(--severe-bg)';
+      statusBadge.style.color = 'var(--severe)';
+      resultBox.style.borderColor = '#fca5a5';
+      managementText.innerHTML = '<strong>Xử trí đề xuất:</strong> <strong>Bệnh nhân bị suy tạng kéo dài (&ge; 48 giờ).</strong> Bắt buộc theo dõi và hồi sức tích cực tại ICU. Hỗ trợ thông khí cơ học, lọc máu liên tục (CRRT) hoặc dùng vận mạch khi cần. Đánh giá hoại tử tụy nhiễm trùng qua CT-scan có cản quang sau 72 giờ và phối hợp đa chuyên khoa (Ngoại tiêu hóa, Can thiệp can thiệp tối thiểu Step-up approach).';
+    } else if (hasOrganFailure || hasComplications) {
+      // TRUNG BÌNH NẶNG (Moderately Severe)
+      classTitle.textContent = 'VIÊM TỤY CẤP THỂ TRUNG BÌNH NẶNG (Moderately Severe)';
+      classTitle.style.color = 'var(--mod)';
+      statusBadge.textContent = 'Tỷ lệ tử vong thấp (~ 2% - 3%)';
+      statusBadge.style.backgroundColor = 'var(--mod-bg)';
+      statusBadge.style.color = 'var(--mod)';
+      resultBox.style.borderColor = '#fdba74';
+      
+      let note = 'Hiện diện ';
+      if (hasOrganFailure) note += 'suy tạng thoáng qua (&lt; 48 giờ)';
+      if (hasOrganFailure && hasComplications) note += ' kèm ';
+      if (hasComplications) note += 'biến chứng tại chỗ hoặc biến chứng toàn thân';
+
+      managementText.innerHTML = `<strong>Xử trí đề xuất:</strong> ${note}. Cần điều trị tại đơn vị hồi sức cấp cứu hoặc phòng bệnh chăm sóc đặc biệt (HDU). Hồi sức dịch tích cực có theo dõi thể tích, giảm đau thích hợp, theo dõi sát các chỉ số sinh tồn và chức năng tạng để ngăn ngừa tiến triển thành suy tạng kéo dài.`;
+    } else {
+      // NHẸ (Mild)
+      classTitle.textContent = 'VIÊM TỤY CẤP THỂ NHẸ (Mild)';
+      classTitle.style.color = 'var(--mild)';
+      statusBadge.textContent = 'Tỷ lệ tử vong rất thấp (< 1%)';
+      statusBadge.style.backgroundColor = 'var(--mild-bg)';
+      statusBadge.style.color = 'var(--mild)';
+      resultBox.style.borderColor = '#86efac';
+      managementText.innerHTML = '<strong>Xử trí đề xuất:</strong> Bệnh nhân không có suy tạng và không có biến chứng tại chỗ/toàn thân. Tiên lượng hồi phục nhanh trong tuần đầu, điều trị nội khoa thông thường tại khoa phòng tiêu hóa: Bù dịch mục tiêu, giảm đau và cho ăn sớm đường miệng (thức ăn lỏng/mềm) ngay khi người bệnh giảm đau bụng và không nôn.';
+    }
+  }
+
+  // Lắng nghe sự kiện select
+  [organResp, organRenal, organCardio].forEach(el => el.addEventListener('change', calculate));
+
+  // Lắng nghe sự kiện checkbox
+  [chkPersistent, chkLocal, chkSystemic].forEach(el => {
+    el.addEventListener('change', (e) => {
+      const parent = e.target.closest('.checkbox-item');
+      if (e.target.checked) parent.classList.add('checked');
+      else parent.classList.remove('checked');
+      calculate();
+    });
+  });
+
+  // Nút đặt lại
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    organResp.value = '0';
+    organRenal.value = '0';
+    organCardio.value = '0';
+    [chkPersistent, chkLocal, chkSystemic].forEach(chk => {
+      chk.checked = false;
+      chk.closest('.checkbox-item').classList.remove('checked');
+    });
+    calculate();
+  });
+
+  calculate();
+</script>
+
+</body>
+</html>

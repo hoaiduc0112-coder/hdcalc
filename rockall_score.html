@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Rockall - Đánh giá nguy cơ xuất huyết tiêu hóa trên</title>
+  <meta name="specialty" content="Tiêu hóa / Hồi sức cấp cứu">
+  <meta name="description" content="Thang điểm Rockall (Pre-endoscopy và Full Rockall Score) giúp đánh giá nguy cơ tái xuất huyết và tỷ lệ tử vong ở bệnh nhân xuất huyết tiêu hóa trên.">
+  <style>
+    :root {
+      --primary: #1070e5;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --warning-bg: #fef9c3;
+      --warning-text: #854d0e;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px 16px; line-height: 1.5; }
+    .container { max-width: 760px; margin: 0 auto; }
+    
+    .header { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .badge { display: inline-block; background: #eff6ff; color: var(--primary); font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 24px; color: var(--text); margin-bottom: 6px; }
+    .desc { color: var(--subtext); font-size: 14px; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: var(--text); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+    
+    .item { margin-bottom: 16px; }
+    .item:last-child { margin-bottom: 0; }
+    .item-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; display: block; }
+    
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn-opt { flex: 1 1 auto; min-width: 120px; text-align: center; border: 1px solid var(--border); background: #f8fafc; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s ease; }
+    .btn-opt:hover { background: #e2e8f0; }
+    .btn-opt.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
+
+    .reset-btn { width: 100%; background: #f1f5f9; color: var(--subtext); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 16px; transition: background 0.2s; }
+    .reset-btn:hover { background: #e2e8f0; color: var(--text); }
+
+    .result-box { background: #fff; border: 2px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; transition: all 0.3s ease; }
+    .score-summary { display: flex; justify-content: center; gap: 20px; margin-bottom: 8px; }
+    .score-item { display: flex; flex-direction: column; align-items: center; }
+    .score-label { font-size: 12px; color: var(--subtext); font-weight: 600; text-transform: uppercase; }
+    .score-val { font-size: 32px; font-weight: 800; color: var(--primary); }
+    
+    .tag { display: inline-block; padding: 6px 16px; border-radius: 9999px; font-weight: 700; font-size: 14px; margin: 8px 0; }
+    .recommendation { font-size: 14px; margin-top: 8px; color: var(--text); text-align: left; background: #f8fafc; padding: 12px; border-radius: 6px; border-left: 4px solid var(--primary); }
+
+    .guide { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 18px; font-size: 13.5px; color: var(--subtext); }
+    .guide h3 { color: var(--text); margin-bottom: 10px; font-size: 15px; }
+    .guide ul { padding-left: 20px; margin-bottom: 12px; }
+    .guide li { margin-bottom: 6px; }
+    .table-guide { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    .table-guide th, .table-guide td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+    .table-guide th { background: #f1f5f9; color: var(--text); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="badge">Tiêu hóa / Hồi sức cấp cứu</span>
+    <h1>Thang điểm Rockall</h1>
+    <p class="desc">Đánh giá nguy cơ tái xuất huyết và tử vong ở bệnh nhân xuất huyết tiêu hóa trên (trước & sau nội soi).</p>
+  </div>
+
+  <button class="reset-btn" onclick="resetForm()">Đặt lại (Reset)</button>
+
+  <!-- Lâm sàng & Tiền sử (Pre-endoscopy) -->
+  <div class="card">
+    <div class="card-title">1. Đánh giá trước nội soi (Pre-Endoscopy)</div>
+    
+    <div class="item">
+      <span class="item-label">Tuổi (Age):</span>
+      <div class="btn-group" data-param="age">
+        <button class="btn-opt active" data-value="0" onclick="selectOpt(this)">Cưới 60 tuổi (0 đ)</button>
+        <button class="btn-opt" data-value="1" onclick="selectOpt(this)">60 - 79 tuổi (1 đ)</button>
+        <button class="btn-opt" data-value="2" onclick="selectOpt(this)">≥ 80 tuổi (2 đ)</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="item-label">Tình trạng sốc / Mạch & Huyết áp (Shock status):</span>
+      <div class="btn-group" data-param="shock">
+        <button class="btn-opt active" data-value="0" onclick="selectOpt(this)">Không sốc (Mạch &lt; 100, HAP ≥ 100) (0 đ)</button>
+        <button class="btn-opt" data-value="1" onclick="selectOpt(this)">Mạch nhanh (Mạch ≥ 100, HAP ≥ 100) (1 đ)</button>
+        <button class="btn-opt" data-value="2" onclick="selectOpt(this)">Hạ huyết áp (HAP &lt; 100 mmHg) (2 đ)</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="item-label">Bệnh đồng mắc (Comorbidities):</span>
+      <div class="btn-group" data-param="comorbidity">
+        <button class="btn-opt active" data-value="0" onclick="selectOpt(this)">Không có bệnh đồng mắc lớn (0 đ)</button>
+        <button class="btn-opt" data-value="2" onclick="selectOpt(this)">Bệnh tim thiếu máu, suy tim, bệnh nền khác (2 đ)</button>
+        <button class="btn-opt" data-value="3" onclick="selectOpt(this)">Suy thận, suy gan, ung thư tiến triển (3 đ)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bằng chứng nội soi (Post-endoscopy) -->
+  <div class="card">
+    <div class="card-title">2. Đánh giá qua nội soi (Endoscopic findings)</div>
+    
+    <div class="item">
+      <span class="item-label">Chẩn đoán nội soi (Diagnosis):</span>
+      <div class="btn-group" data-param="diagnosis">
+        <button class="btn-opt active" data-value="0" onclick="selectOpt(this)">Mallory-Weiss / Không thấy tổn thương (0 đ)</button>
+        <button class="btn-opt" data-value="1" onclick="selectOpt(this)">Tất cả chẩn đoán khác (Loét, viêm...) (1 đ)</button>
+        <button class="btn-opt" data-value="2" onclick="selectOpt(this)">K đường tiêu hóa trên (2 đ)</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="item-label">Dấu hiệu xuất huyết gần đây (Stigmata of recent hemorrhage):</span>
+      <div class="btn-group" data-param="stigmata">
+        <button class="btn-opt active" data-value="0" onclick="selectOpt(this)">Đáy sạch / Cặn đen (0 đ)</button>
+        <button class="btn-opt" data-value="2" onclick="selectOpt(this)">Máu tươi, mạch máu nổi, cục máu đông (2 đ)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kết quả -->
+  <div class="result-box" id="result-box">
+    <div class="score-summary">
+      <div class="score-item">
+        <span class="score-label">Pre-Endoscopy</span>
+        <span class="score-val" id="pre-score">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">Full Rockall Score</span>
+        <span class="score-val" id="total-score">0</span>
+      </div>
+    </div>
+    
+    <div class="tag" id="status-tag">Nguy cơ thấp</div>
+    <div class="recommendation" id="recommendation">
+      <!-- Nội dung gợi ý -->
+    </div>
+  </div>
+
+  <!-- Hướng dẫn & Diễn giải lâm sàng -->
+  <div class="guide">
+    <h3>Hướng dẫn & Diễn giải lâm sàng</h3>
+    <ul>
+      <li><strong>Thang điểm Pre-endoscopy Rockall (0-7 điểm):</strong> Dùng khi chưa thực hiện nội soi. Điểm = 0 biểu hiện nguy cơ tử vong rất thấp, có thể cân nhắc xuất viện hoặc điều trị ngoại trú.</li>
+      <li><strong>Full Rockall Score (0-11 điểm):</strong> Kết hợp lâm sàng và hình ảnh nội soi để tiên lượng nguy cơ tái xuất huyết và tử vong.</li>
+    </ul>
+
+    <table class="table-guide">
+      <thead>
+        <tr>
+          <th>Tổng điểm (Full Rockall)</th>
+          <th>Phân tầng nguy cơ</th>
+          <th>Tỷ lệ tái xuất huyết</th>
+          <th>Tỷ lệ tử vong</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0 - 2 điểm</td>
+          <td><span style="color: green; font-weight: bold;">Nguy cơ thấp</span></td>
+          <td>~ 4.9%</td>
+          <td>~ 0.1%</td>
+        </tr>
+        <tr>
+          <td>3 - 7 điểm</td>
+          <td><span style="color: #b45309; font-weight: bold;">Nguy cơ trung bình</span></td>
+          <td>10% - 30%</td>
+          <td>2% - 11%</td>
+        </tr>
+        <tr>
+          <td>≥ 8 điểm</td>
+          <td><span style="color: red; font-weight: bold;">Nguy cơ cao</span></td>
+          <td>&gt; 40%</td>
+          <td>&gt; 25% - 40%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const state = {
+    age: 0,
+    shock: 0,
+    comorbidity: 0,
+    diagnosis: 0,
+    stigmata: 0
+  };
+
+  function selectOpt(element) {
+    const parent = element.parentElement;
+    const param = parent.getAttribute('data-param');
+    const value = parseInt(element.getAttribute('data-value'), 10);
+
+    Array.from(parent.children).forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+
+    state[param] = value;
+    calculate();
+  }
+
+  function resetForm() {
+    state.age = 0;
+    state.shock = 0;
+    state.comorbidity = 0;
+    state.diagnosis = 0;
+    state.stigmata = 0;
+
+    document.querySelectorAll('.btn-group').forEach(group => {
+      Array.from(group.children).forEach((btn, index) => {
+        if (index === 0) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    });
+
+    calculate();
+  }
+
+  function calculate() {
+    const preScore = state.age + state.shock + state.comorbidity;
+    const fullScore = preScore + state.diagnosis + state.stigmata;
+
+    document.getElementById('pre-score').innerText = preScore;
+    document.getElementById('total-score').innerText = fullScore;
+
+    const resultBox = document.getElementById('result-box');
+    const statusTag = document.getElementById('status-tag');
+    const rec = document.getElementById('recommendation');
+
+    if (fullScore <= 2) {
+      statusTag.innerText = "NGUY CƠ THẤP";
+      statusTag.style.backgroundColor = "var(--success-bg)";
+      statusTag.style.color = "var(--success-text)";
+      resultBox.style.borderColor = "#22c55e";
+      rec.innerHTML = "<strong>Hướng xử trí:</strong><br>" +
+        "• Tiên lượng rất tốt (Tái xuất huyết ~4.9%, Tử vong &lt;1%).<br>" +
+        "• Cân nhắc cho xuất viện sớm và theo dõi ngoại trú nếu tình trạng lâm sàng ổn định.<br>" +
+        "• Điều trị nguyên nhân (VD:PPI đường uống, diệt H. pylori nếu có loét).";
+    } else if (fullScore <= 7) {
+      statusTag.innerText = "NGUY CƠ TRUNG BÌNH";
+      statusTag.style.backgroundColor = "var(--warning-bg)";
+      statusTag.style.color = "var(--warning-text)";
+      resultBox.style.borderColor = "#eab308";
+      rec.innerHTML = "<strong>Hướng xử trí:</strong><br>" +
+        "• Tỷ lệ tái xuất huyết 10-30%, tỷ lệ tử vong 2-11%.<br>" +
+        "• Nhập viện theo dõi tại khoa Tiêu hóa / Nội chung.<br>" +
+        "• Điều trị PPI liều cao (tiêm tĩnh mạch), theo dõi sát mạch, huyết áp và Hb.";
+    } else {
+      statusTag.innerText = "NGUY CƠ CAO";
+      statusTag.style.backgroundColor = "var(--danger-bg)";
+      statusTag.style.color = "var(--danger-text)";
+      resultBox.style.borderColor = "#ef4444";
+      rec.innerHTML = "<strong>Hướng xử trí:</strong><br>" +
+        "• Tỷ lệ tái xuất huyết &gt;40%, tỷ lệ tử vong &gt;25%.<br>" +
+        "• Cần theo dõi tại khoa Hồi sức tích cực (ICU / HDU).<br>" +
+        "• Tiếp tục PPI truyền tĩnh mạch liên tục, hồi sức tích cực, chuẩn bị hội chẩn can thiệp lại qua nội soi hoặc phẫu thuật/TACE nếu xuất huyết tiếp diễn.";
+    }
+  }
+
+  // Khởi tạo ban đầu
+  calculate();
+</script>
+</body>
+</html>
