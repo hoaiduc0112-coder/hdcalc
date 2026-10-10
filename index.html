@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MDCalc Việt Nam - Thư viện Thang điểm Lâm sàng</title>
+  <title>HDCalc Tiếng Việt - Thư viện Thang điểm Lâm sàng</title>
   <style>
     :root {
       --primary: #1070e5;
@@ -14,26 +14,26 @@
       --border: #e2e8f0;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 24px; }
-    .container { max-width: 1000px; margin: 0 auto; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px 80px; }
+    .container { max-width: 900px; margin: 0 auto; }
     
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-    h1 { font-size: 24px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-    
-    .btn { background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; }
-    .btn:hover { opacity: 0.9; }
+    header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    h1 { font-size: 24px; color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: var(--subtext); }
 
-    .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; margin-bottom: 24px; outline: none; }
+    .search-box { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; margin-bottom: 20px; outline: none; background: #ffffff; }
     .search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(16, 112, 229, 0.15); }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s; display: flex; flex-direction: column; }
     .card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); border-color: var(--primary); }
     .card-title { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
-    .card-meta { font-size: 12px; color: var(--primary); background: #eff6ff; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; width: fit-content; }
+    .card-meta { font-size: 12px; color: var(--primary); background: #eff6ff; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; width: fit-content; font-weight: 500; }
     .card-desc { font-size: 13px; color: var(--subtext); line-height: 1.4; flex-grow: 1; }
 
-    .empty-state { text-align: center; padding: 48px 0; color: var(--subtext); }
+    .status-msg { text-align: center; padding: 40px 0; color: var(--subtext); font-size: 15px; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(16,112,229,0.2); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.8s ease-in-out infinite; margin-bottom: 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -41,75 +41,97 @@
 <div class="container">
   <header>
     <h1>🩺 HDCalc Tiếng Việt</h1>
-    <button class="btn" id="btn-scan">📂 Chọn thư mục để quét file</button>
+    <div class="subtitle">Thư viện tra cứu &amp; tính toán điểm lâm sàng y khoa</div>
   </header>
 
-  <input type="text" id="search" class="search-box" placeholder="Tìm kiếm thang điểm (ví dụ: CURB-65, Glasgow, Tim mạch...)...">
+  <input type="text" id="search" class="search-box" placeholder="Tìm kiếm thang điểm (ví dụ: CURB-65, BISAP, Child-Pugh, Hô hấp...)...">
 
-  <div id="calculator-list" class="grid">
-    <!-- Danh sách thang điểm sẽ tự động xuất hiện ở đây -->
+  <div id="status-container" class="status-msg">
+    <div class="spinner"></div>
+    <div>Đang tải danh sách công cụ từ GitHub...</div>
   </div>
-  <div id="empty-state" class="empty-state" style="display: none;">Không tìm thấy thang điểm phù hợp.</div>
+
+  <div id="calculator-list" class="grid"></div>
 </div>
 
 <script>
-  let calculators = [];
+  // Cấu hình tài khoản GitHub và kho lưu trữ của bạn
+  const GITHUB_USER = 'hoaiduc0112-coder';
+  const GITHUB_REPO = 'hdcalc';
 
+  let calculators = [];
   const listEl = document.getElementById('calculator-list');
   const searchEl = document.getElementById('search');
-  const emptyEl = document.getElementById('empty-state');
+  const statusEl = document.getElementById('status-container');
 
-  // Quét thư mục qua File System Access API
-  document.getElementById('btn-scan').addEventListener('click', async () => {
+  async function loadCalculators() {
     try {
-      const dirHandle = await window.showDirectoryPicker();
-      calculators = [];
+      // 1. Gọi GitHub API để lấy danh sách file trong kho
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`);
+      if (!res.ok) throw new Error('Không thể kết nối với GitHub API');
+      
+      const files = await res.json();
+      
+      // 2. Lọc ra các file HTML (loại trừ index.html)
+      const htmlFiles = files.filter(file => file.name.endsWith('.html') && file.name.toLowerCase() !== 'index.html');
 
-      for await (const entry of dirHandle.values()) {
-        if (entry.kind === 'file' && entry.name.endsWith('.html') && entry.name !== 'index.html') {
-          const file = await entry.getFile();
-          const text = await file.text();
+      if (htmlFiles.length === 0) {
+        statusEl.innerHTML = 'Chưa có thang điểm nào được tải lên.';
+        return;
+      }
+
+      // 3. Đọc nội dung từng file HTML để lấy <title>, <meta name="specialty">, <meta name="description">
+      const fetchPromises = htmlFiles.map(async (file) => {
+        try {
+          const rawRes = await fetch(file.download_url);
+          const text = await rawRes.text();
           
-          // Trích xuất thẻ title và meta description
           const parser = new DOMParser();
           const doc = parser.parseFromString(text, 'text/html');
-          const title = doc.querySelector('title')?.innerText || entry.name.replace('.html', '');
-          const specialty = doc.querySelector('meta[name="specialty"]')?.getAttribute('content') || 'Chung';
-          const desc = doc.querySelector('meta[name="description"]')?.getAttribute('content') || 'Bấm để mở công cụ tính.';
+          
+          const title = doc.querySelector('title')?.innerText || file.name.replace('.html', '').toUpperCase();
+          const specialty = doc.querySelector('meta[name="specialty"]')?.getAttribute('content') || 'Cấp cứu / Đa khoa';
+          const desc = doc.querySelector('meta[name="description"]')?.getAttribute('content') || 'Bấm để mở công cụ tính toán điểm lâm sàng.';
 
-          calculators.push({
-            name: entry.name,
+          return {
+            filename: file.name,
             title: title,
             specialty: specialty,
             desc: desc
-          });
+          };
+        } catch (e) {
+          return {
+            filename: file.name,
+            title: file.name.replace('.html', '').toUpperCase(),
+            specialty: 'Y khoa',
+            desc: 'Bấm để mở công cụ tính toán.'
+          };
         }
-      }
+      });
 
-      // Lưu danh sách tạm vào localStorage để lần sau vào lại không bị trắng trang
-      localStorage.setItem('cached_calcs', JSON.stringify(calculators));
+      calculators = await Promise.all(fetchPromises);
+      statusEl.style.display = 'none';
       renderList(calculators);
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        alert('Trình duyệt của bạn có thể chưa hỗ trợ hoặc bị chặn quyền truy cập folder.');
-      }
-    }
-  });
 
-  // Hiển thị danh sách thẻ
+    } catch (err) {
+      console.error(err);
+      statusEl.innerHTML = 'Lỗi tải danh sách: Hãy kiểm tra lại kết nối mạng hoặc kho lưu trữ GitHub.';
+    }
+  }
+
   function renderList(items) {
     listEl.innerHTML = '';
     if (items.length === 0) {
-      emptyEl.style.display = 'block';
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = 'Không tìm thấy thang điểm phù hợp.';
       return;
     }
-    emptyEl.style.display = 'none';
+    statusEl.style.display = 'none';
 
     items.forEach(calc => {
       const card = document.createElement('a');
       card.className = 'card';
-      card.href = calc.name;
-      card.target = '_blank'; // Mở tab mới khi đánh điểm
+      card.href = calc.filename;
       card.innerHTML = `
         <span class="card-meta">${calc.specialty}</span>
         <div class="card-title">${calc.title}</div>
@@ -119,23 +141,20 @@
     });
   }
 
-  // Tìm kiếm theo từ khóa
+  // Lắng nghe ô tìm kiếm
   searchEl.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     const filtered = calculators.filter(c => 
       c.title.toLowerCase().includes(term) || 
       c.specialty.toLowerCase().includes(term) || 
-      c.desc.toLowerCase().includes(term)
+      c.desc.toLowerCase().includes(term) ||
+      c.filename.toLowerCase().includes(term)
     );
     renderList(filtered);
   });
 
-  // Tự phục hồi dữ liệu từ phiên trước
-  const cached = localStorage.getItem('cached_calcs');
-  if (cached) {
-    calculators = JSON.parse(cached);
-    renderList(calculators);
-  }
+  // Chạy ứng dụng
+  loadCalculators();
 </script>
 
 </body>
