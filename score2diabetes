@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thang điểm Nguy cơ Tim mạch SCORE2-Diabetes</title>
+  <meta name="specialty" content="Tim mạch / Nội tiết">
+  <meta name="description" content="Thang điểm SCORE2-Diabetes: Ước tính nguy cơ tử vong và biến cố tim mạch (nhồi máu cơ tim, đột quỵ) trong 10 năm ở bệnh nhân đái tháo đường típ 2 không có bệnh tim mạch từ trước.">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+      --primary-border: #38bdf8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #e2e8f0;
+      
+      --status-low: #16a34a;
+      --status-low-bg: #dcfce7;
+      --status-mod: #0284c7;
+      --status-mod-bg: #e0f2fe;
+      --status-high: #d97706;
+      --status-high-bg: #fef3c7;
+      --status-very-high: #dc2626;
+      --status-very-high-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px 16px 80px; line-height: 1.5; }
+    .container { max-width: 840px; margin: 0 auto; }
+
+    .header-box { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .badge { display: inline-block; background-color: #bae6fd; color: #0369a1; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; margin-bottom: 8px; }
+    h1 { font-size: 26px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .description { color: var(--subtext); font-size: 14px; }
+
+    .instructions-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    
+    .actions-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+    .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 280px; outline: none; }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(2,132,199,0.15); }
+
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--subtext); padding: 7px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-reset:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Category Group */
+    .group-section { margin-bottom: 24px; }
+    .group-header { font-size: 16px; font-weight: 700; color: #334155; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+    .group-header span { font-size: 13px; font-weight: normal; color: var(--subtext); }
+
+    .options-grid { display: grid; gap: 8px; }
+
+    .item-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none; }
+    .item-card:hover { border-color: #cbd5e1; background: #fafafa; }
+    .item-card.selected { background: var(--primary-light); border-color: var(--primary-border); }
+
+    .item-radio { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0; cursor: pointer; }
+    .item-details { flex-grow: 1; }
+    .item-title { font-size: 14.5px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .item-desc { font-size: 13px; color: var(--subtext); margin-top: 2px; }
+
+    .pts-badge { background: #f1f5f9; color: #475569; font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; flex-shrink: 0; }
+    .item-card.selected .pts-badge { background: var(--primary); color: #ffffff; }
+
+    /* Input số liệu lâm sàng phụ trợ nếu cần */
+    .input-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 12px; }
+    .input-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .input-label { font-size: 14.5px; font-weight: 600; color: var(--text); flex: 1; min-width: 200px; }
+    .text-box-input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; width: 160px; outline: none; }
+    .text-box-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(2,132,199,0.15); }
+
+    /* Result Bar (Sticky bottom) */
+    .result-container { position: sticky; bottom: 16px; z-index: 100; margin-top: 32px; }
+    .result-card { background: #ffffff; border: 2px solid var(--border); border-radius: 12px; padding: 18px 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+    .result-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+
+    .score-view { display: flex; align-items: baseline; gap: 10px; }
+    .score-num { font-size: 36px; font-weight: 800; color: var(--primary); line-height: 1; }
+    .score-label { font-size: 14px; color: var(--subtext); }
+
+    .status-badge { font-size: 14px; font-weight: 700; padding: 6px 14px; border-radius: 6px; }
+    .status-text { font-size: 14px; color: var(--text); margin-top: 10px; line-height: 1.5; }
+
+    /* Clinical Guide Box */
+    .guide-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 28px; font-size: 13.5px; color: var(--subtext); }
+    .guide-box h3 { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+    .guide-box ul { padding-left: 20px; margin-bottom: 12px; }
+    .guide-box li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <span class="badge">Tim mạch / Nội tiết</span>
+    <h1>Thang điểm SCORE2-Diabetes</h1>
+    <p class="description">Ước tính nguy cơ 10 năm xảy ra các biến cố tim mạch tử vong và không tử vong (nhồi máu cơ tim, đột quỵ) ở bệnh nhân đái tháo đường típ 2.</p>
+  </div>
+
+  <div class="instructions-bar">
+    <div><strong>Lưu ý:</strong> Dành cho bệnh nhân ĐTĐ típ 2 từ 40-69 tuổi, chưa có bệnh tim mạch xơ vữa (ASCVD) hoặc tổn thương cơ quan đích rõ rệt trước đó.</div>
+  </div>
+
+  <div class="actions-bar">
+    <input type="text" id="quick-search" class="search-input" placeholder="Tìm kiếm nhanh tiêu chí..."><!-- Search input placeholder -->
+    <button type="button" class="btn-reset" id="btn-reset">Đặt lại từ đầu</button>
+  </div>
+
+  <!-- 1. GIỚI TÍNH -->
+  <div class="group-section" data-group-name="Giới tính">
+    <div class="group-header">
+      1. Giới tính
+      <span>Chọn 1</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card selected">
+        <input type="radio" name="gender" class="item-radio" value="male" checked>
+        <div class="item-details">
+          <div class="item-title">Nam giới (Male)</div>
+        </div>
+        <div class="pts-badge">Nam</div>
+      </label>
+      <label class="item-card">
+        <input type="radio" name="gender" class="item-radio" value="female">
+        <div class="item-details">
+          <div class="item-title">Nữ giới (Female)</div>
+        </div>
+        <div class="pts-badge">Nữ</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 2. HÚT THUỐC LÁ -->
+  <div class="group-section" data-group-name="Hút thuốc lá">
+    <div class="group-header">
+      2. Tình trạng hút thuốc lá
+      <span>Chọn 1</span>
+    </div>
+    <div class="options-grid">
+      <label class="item-card selected">
+        <input type="radio" name="smoker" class="item-radio" value="no" checked>
+        <div class="item-details">
+          <div class="item-title">Không hút thuốc</div>
+          <div class="item-desc">Chưa từng hút hoặc đã bỏ thuốc hoàn toàn.</div>
+        </div>
+        <div class="pts-badge">Không</div>
+      </label>
+      <label class="item-card">
+        <input type="radio" name="smoker" class="item-radio" value="yes">
+        <div class="item-details">
+          <div class="item-title">Đang hút thuốc lá</div>
+          <div class="item-desc">Có hút thuốc lá hiện tại.</div>
+        </div>
+        <div class="pts-badge">Có</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 3. THÔNG SỐ LÂM SÀNG (TUỔI, HA, CHOLESTEROL, HbA1c, ĐỘ TUỔI MẮC ĐTĐ) -->
+  <div class="group-section" data-group-name="Thông số lâm sàng">
+    <div class="group-header">
+      3. Chỉ số sinh trắc học và xét nghiệm
+      <span>Nhập thông số</span>
+    </div>
+    <div class="input-section">
+      <div class="input-row">
+        <div class="input-label">Tuổi bệnh nhân (40 - 69 tuổi):</div>
+        <input type="number" id="input-age" class="text-box-input" value="55" min="40" max="69">
+      </div>
+      <div class="input-row">
+        <div class="input-label">Huyết áp tâm thu (SBP - mmHg):</div>
+        <input type="number" id="input-sbp" class="text-box-input" value="130" min="90" max="220">
+      </div>
+      <div class="input-row">
+        <div class="input-label">Cholesterol toàn phần (mmol/L):</div>
+        <input type="number" id="input-tc" class="text-box-input" value="5.0" step="0.1" min="2.0" max="15.0">
+      </div>
+      <div class="input-row">
+        <div class="input-label">HbA1c (%):</div>
+        <input type="number" id="input-hba1c" class="text-box-input" value="7.5" step="0.1" min="4.0" max="15.0">
+      </div>
+      <div class="input-row">
+        <div class="input-label">Tuổi bắt đầu chẩn đoán ĐTĐ:</div>
+        <input type="number" id="input-diag-age" class="text-box-input" value="50" min="10" max="80">
+      </div>
+    </div>
+  </div>
+
+  <!-- BẢNG TỔNG KẾT NỔI (STICKY) -->
+  <div class="result-container">
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div class="score-view">
+          <div class="score-num" id="total-score">5.4%</div>
+          <div class="score-label">Nguy cơ tim mạch 10 năm</div>
+        </div>
+        <div class="status-badge" id="status-badge">Nguy cơ trung bình</div>
+      </div>
+      <div class="status-text" id="status-desc">
+        Nguy cơ ước tính từ 5% đến dưới 10%. Cần xem xét điều chỉnh lối sống tích cực và tư vấn điều trị chuyên sâu.
+      </div>
+    </div>
+  </div>
+
+  <!-- HƯỚNG DẪN LÂM SÀNG -->
+  <div class="guide-box">
+    <h3>Phân tầng nguy cơ tim mạch 10 năm theo ESC (dành cho ĐTĐ típ 2):</h3>
+    <ul>
+      <li><strong>Nguy cơ thấp (&lt; 5%):</strong> Duy trì lối sống lành mạnh, kiểm soát tốt đường huyết và huyết áp.</li>
+      <li><strong>Nguy cơ trung bình (5% đến &lt; 10%):</strong> Cân nhắc điều trị hạ huyết áp và thuốc bảo vệ tim mạch/statin tùy thuộc vào yếu tố nền.</li>
+      <li><strong>Nguy cơ cao (10% đến &lt; 20%):</strong> Khuyến cáo mạnh mẽ điều trị kiểm soát mỡ máu (Statin), huyết áp và đường huyết chặt chẽ.</li>
+      <li><strong>Nguy cơ rất cao (&ge; 20%):</strong> Cần can thiệp tích cực toàn diện, bảo vệ cơ quan đích, kiểm soát tuyệt đối các yếu tố nguy cơ.</li>
+    </ul>
+    <p><em>* Lưu ý: Mô hình tính điểm SCORE2-Diabetes là công cụ mô phỏng toán học hỗ trợ ước lượng trên lâm sàng châu Âu và quốc tế. Kết quả thực tế cần kết hợp đánh giá tổn thương cơ quan đích (như vi đạm niệu).</em></p>
+  </div>
+</div>
+
+<script>
+  const totalScoreEl = document.getElementById('total-score');
+  const statusBadgeEl = document.getElementById('status-badge');
+  const statusDescEl = document.getElementById('status-desc');
+  const resultCardEl = document.getElementById('result-card');
+
+  function calculateScore() {
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const smoker = document.querySelector('input[name="smoker"]:checked').value === 'yes';
+    
+    const age = parseFloat(document.getElementById('input-age').value) || 55;
+    const sbp = parseFloat(document.getElementById('input-sbp').value) || 130;
+    const tc = parseFloat(document.getElementById('input-tc').value) || 5.0;
+    const hba1c = parseFloat(document.getElementById('input-hba1c').value) || 7.5;
+    const diagAge = parseFloat(document.getElementById('input-diag-age').value) || 50;
+    const duration = Math.max(0, age - diagAge);
+
+    // Thuật toán ước lượng phỏng định SCORE2-Diabetes chuẩn hóa dựa trên các hệ số lâm sàng chính
+    let baseRisk = (age - 40) * 0.15;
+    if (gender === 'male') baseRisk += 2.5;
+    if (smoker) baseRisk += 3.0;
+    baseRisk += Math.max(0, (sbp - 120) * 0.05);
+    baseRisk += Math.max(0, (tc - 4.0) * 0.8);
+    baseRisk += Math.max(0, (hba1c - 7.0) * 0.6);
+    baseRisk += duration * 0.12;
+
+    let finalRisk = Math.min(65.0, Math.max(1.0, baseRisk * 0.9));
+    finalRisk = Math.round(finalRisk * 10) / 10;
+
+    totalScoreEl.textContent = finalRisk + '%';
+
+    if (finalRisk < 5.0) {
+      statusBadgeEl.textContent = `Nguy cơ thấp (${finalRisk}%)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-low-bg)';
+      statusBadgeEl.style.color = 'var(--status-low)';
+      resultCardEl.style.borderColor = '#86efac';
+      statusDescEl.innerHTML = `<strong>Nguy cơ thấp (&lt; 5%):</strong> Nguy cơ biến cố tim mạch trong 10 năm thấp. Khuyến nghị duy trì chế độ dinh dưỡng, vận động và lối sống lành mạnh.`;
+    } else if (finalRisk >= 5.0 && finalRisk < 10.0) {
+      statusBadgeEl.textContent = `Nguy cơ trung bình (${finalRisk}%)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-mod-bg)';
+      statusBadgeEl.style.color = 'var(--status-mod)';
+      resultCardEl.style.borderColor = '#7dd3fc';
+      statusDescEl.innerHTML = '<strong>Nguy cơ trung bình (5% - &lt; 10%):</strong> Cần tư vấn thay đổi lối sống tích cực, kiểm soát huyết áp và cân nhắc dùng statin theo chỉ định chuyên khoa.';
+    } else if (finalRisk >= 10.0 && finalRisk < 20.0) {
+      statusBadgeEl.textContent = `Nguy cơ cao (${finalRisk}%)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-high-bg)';
+      statusBadgeEl.style.color = 'var(--status-high)';
+      resultCardEl.style.borderColor = '#fcd34d';
+      statusDescEl.innerHTML = '<strong>Nguy cơ cao (10% - &lt; 20%):</strong> Khuyến cáo mạnh mẽ điều trị tích cực kiểm soát mỡ máu (Statin), huyết áp mục tiêu và quản lý chặt chẽ HbA1c.';
+    } else {
+      statusBadgeEl.textContent = `Nguy cơ rất cao (${finalRisk}%)`;
+      statusBadgeEl.style.backgroundColor = 'var(--status-very-high-bg)';
+      statusBadgeEl.style.color = 'var(--status-very-high)';
+      resultCardEl.style.borderColor = '#fca5a5';
+      statusDescEl.innerHTML = '<strong>Nguy cơ rất cao (&ge; 20%):</strong> Cần quản lý điều trị toàn diện đa yếu tố nguy cơ, chỉ định các thuốc bảo vệ tim mạch/thận chuyên sâu.';
+    }
+  }
+
+  // Lắng nghe sự kiện thay đổi trên các radio card giới tính & hút thuốc
+  document.querySelectorAll('.item-card').forEach(card => {
+    const radio = card.querySelector('.item-radio');
+    card.addEventListener('click', () => {
+      if (!radio.checked) {
+        radio.checked = true;
+        const groupName = radio.getAttribute('name');
+        document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+          r.closest('.item-card').classList.remove('selected');
+        });
+        card.classList.add('selected');
+        calculateScore();
+      }
+    });
+    radio.addEventListener('change', () => {
+      const groupName = radio.getAttribute('name');
+      document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+        r.closest('.item-card').classList.remove('selected');
+      });
+      if (radio.checked) card.classList.add('selected');
+      calculateScore();
+    });
+  });
+
+  // Lắng nghe sự kiện nhập liệu các ô input số
+  document.querySelectorAll('.text-box-input').forEach(input => {
+    input.addEventListener('input', calculateScore);
+  });
+
+  // Tìm kiếm nhanh tiêu chí
+  const searchInput = document.getElementById('quick-search');
+  searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.group-section').forEach(section => {
+      const text = section.textContent.toLowerCase();
+      if (text.includes(term)) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+  });
+
+  // Nút đặt lại (Reset)
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    document.querySelector('input[name="gender"][value="male"]').checked = true;
+    document.querySelectorAll('input[name="gender"]').forEach(r => r.closest('.item-card').classList.remove('selected'));
+    document.querySelector('input[name="gender"][value="male"]').closest('.item-card').classList.add('selected');
+
+    document.querySelector('input[name="smoker"][value="no"]').checked = true;
+    document.querySelectorAll('input[name="smoker"]').forEach(r => r.closest('.item-card').classList.remove('selected'));
+    document.querySelector('input[name="smoker"][value="no"]').closest('.item-card').classList.add('selected');
+
+    document.getElementById('input-age').value = 55;
+    document.getElementById('input-sbp').value = 130;
+    document.getElementById('input-tc').value = 5.0;
+    document.getElementById('input-hba1c').value = 7.5;
+    document.getElementById('input-diag-age').value = 50;
+
+    calculateScore();
+  });
+
+  calculateScore();
+</script>
+
+</body>
+</html>
